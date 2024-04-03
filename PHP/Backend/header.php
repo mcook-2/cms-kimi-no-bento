@@ -1,5 +1,6 @@
 <?php
-define('BASE_URL', 'http://localhost:31337/wd2/Project/PHP/Pages/');
+define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/PHP/Pages/');
+
 
 function logout()
 {
