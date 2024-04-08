@@ -15,10 +15,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     if (empty($errors)) {
 
-        $username = $_POST["username"];
-        $email = $_POST["email"];
-        $password = $_POST["password"];
-        $confirm_password = $_POST["confirm_password"];
+        $username = htmlspecialchars($_POST["username"], ENT_QUOTES, "UTF-8");
+        $email = htmlspecialchars($_POST["email"], ENT_QUOTES, "UTF-8");
+        $password = htmlspecialchars($_POST["password"], ENT_QUOTES, "UTF-8");
+        $confirm_password = htmlspecialchars($_POST["confirm_password"], ENT_QUOTES, "UTF-8");
+
 
         // role_id 935 is user
         $stmt = $db->prepare("INSERT INTO users (username, email, password, role_id) VALUES (:username, :email, :password, '935')");

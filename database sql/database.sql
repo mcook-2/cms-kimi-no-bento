@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 05, 2024 at 11:47 PM
+-- Generation Time: Apr 07, 2024 at 11:23 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -46,18 +46,9 @@ CREATE TABLE `bento_pictures` (
 
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
-  `cat_id` int(5) NOT NULL,
-  `cat_name` varchar(255) NOT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+  `category_id` int(11) NOT NULL,
+  `name` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `categories`
---
-
-INSERT INTO `categories` (`cat_id`, `cat_name`, `date_created`) VALUES
-(1, 'FAQ', '2024-04-03 15:20:31'),
-(2, 'Bento pictures', '2024-04-03 16:04:07');
 
 -- --------------------------------------------------------
 
@@ -124,18 +115,11 @@ CREATE TABLE `payment_methods` (
 DROP TABLE IF EXISTS `posts`;
 CREATE TABLE `posts` (
   `post_id` int(11) NOT NULL,
-  `thread_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
+  `topic_id` int(11) DEFAULT NULL,
+  `author_id` int(11) DEFAULT NULL,
   `content` text NOT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `posts`
---
-
-INSERT INTO `posts` (`post_id`, `thread_id`, `user_id`, `content`, `date_created`) VALUES
-(1, 1, 2, 'This is some stuff you should know', '2024-04-03 15:26:00');
 
 -- --------------------------------------------------------
 
@@ -173,25 +157,18 @@ CREATE TABLE `subscription_plans` (
 -- --------------------------------------------------------
 
 --
--- Table structure for table `threads`
+-- Table structure for table `topics`
 --
 
-DROP TABLE IF EXISTS `threads`;
-CREATE TABLE `threads` (
-  `thread_id` int(11) NOT NULL,
-  `cat_id` int(5) NOT NULL,
-  `thread_title` varchar(255) NOT NULL,
-  `thread_description` text NOT NULL,
-  `date_created` datetime NOT NULL DEFAULT current_timestamp()
+DROP TABLE IF EXISTS `topics`;
+CREATE TABLE `topics` (
+  `topic_id` int(11) NOT NULL,
+  `category_id` int(11) DEFAULT NULL,
+  `title` varchar(255) NOT NULL,
+  `topic_starter_id` int(11) DEFAULT NULL,
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
+  `reply_count` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
---
--- Dumping data for table `threads`
---
-
-INSERT INTO `threads` (`thread_id`, `cat_id`, `thread_title`, `thread_description`, `date_created`) VALUES
-(1, 1, 'Read before posting', 'This is some important info on how to post', '2024-04-03 15:22:31'),
-(2, 2, 'Lunch Bento', 'post your favourite lunch bentos here', '2024-04-03 16:06:22');
 
 -- --------------------------------------------------------
 
@@ -214,7 +191,8 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role_id`, `creation_date`) VALUES
-(2, 'onigiri_bonbon', 'onigiri_bonbon@oishii.yumyum', 'gochisosamadeshita', 935, '2024-04-02');
+(2, 'onigiri_bonbon', 'onigiri_bonbon@oishii.yumyum', 'gochisosamadeshita', 935, '2024-04-02'),
+(6, 'funguy1337', 'fake@gmail.com', 'PASSword123', 935, '2024-04-06');
 
 -- --------------------------------------------------------
 
@@ -262,7 +240,7 @@ ALTER TABLE `bento_pictures`
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
-  ADD PRIMARY KEY (`cat_id`);
+  ADD PRIMARY KEY (`category_id`);
 
 --
 -- Indexes for table `menu_items`
@@ -296,8 +274,8 @@ ALTER TABLE `payment_methods`
 --
 ALTER TABLE `posts`
   ADD PRIMARY KEY (`post_id`),
-  ADD KEY `fk_author` (`user_id`),
-  ADD KEY `fk_thread_id` (`thread_id`);
+  ADD KEY `topic_id` (`topic_id`),
+  ADD KEY `author_id` (`author_id`);
 
 --
 -- Indexes for table `roles`
@@ -312,11 +290,12 @@ ALTER TABLE `subscription_plans`
   ADD PRIMARY KEY (`plan_id`);
 
 --
--- Indexes for table `threads`
+-- Indexes for table `topics`
 --
-ALTER TABLE `threads`
-  ADD PRIMARY KEY (`thread_id`),
-  ADD KEY `fk_cat_id` (`cat_id`);
+ALTER TABLE `topics`
+  ADD PRIMARY KEY (`topic_id`),
+  ADD KEY `category_id` (`category_id`),
+  ADD KEY `topic_starter_id` (`topic_starter_id`);
 
 --
 -- Indexes for table `users`
@@ -355,7 +334,7 @@ ALTER TABLE `bento_pictures`
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `cat_id` int(5) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `orders_table`
@@ -373,7 +352,7 @@ ALTER TABLE `payment_methods`
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `subscription_plans`
@@ -382,16 +361,16 @@ ALTER TABLE `subscription_plans`
   MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
--- AUTO_INCREMENT for table `threads`
+-- AUTO_INCREMENT for table `topics`
 --
-ALTER TABLE `threads`
-  MODIFY `thread_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+ALTER TABLE `topics`
+  MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=3;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `user_payments`
@@ -426,14 +405,15 @@ ALTER TABLE `order_items`
 -- Constraints for table `posts`
 --
 ALTER TABLE `posts`
-  ADD CONSTRAINT `fk_author` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `fk_thread_id` FOREIGN KEY (`thread_id`) REFERENCES `threads` (`thread_id`);
+  ADD CONSTRAINT `posts_ibfk_1` FOREIGN KEY (`topic_id`) REFERENCES `topics` (`topic_id`),
+  ADD CONSTRAINT `posts_ibfk_2` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`);
 
 --
--- Constraints for table `threads`
+-- Constraints for table `topics`
 --
-ALTER TABLE `threads`
-  ADD CONSTRAINT `fk_cat_id` FOREIGN KEY (`cat_id`) REFERENCES `categories` (`cat_id`);
+ALTER TABLE `topics`
+  ADD CONSTRAINT `topics_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
+  ADD CONSTRAINT `topics_ibfk_2` FOREIGN KEY (`topic_starter_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `users`

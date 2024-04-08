@@ -1,10 +1,10 @@
 <?php
 
-include('inc/database.php');
+include('inc/database.inc.php');
 
-include('inc/config.php');
+include_once('inc/config.inc.php');
 
-include('inc/header.php');
+include('inc/header.inc.php');
 
 ?>
 
@@ -19,5 +19,5 @@ include('inc/header.php');
 
 
 <?php
-include('inc/footer.php');
+include('inc/footer.inc.php');
 ?>

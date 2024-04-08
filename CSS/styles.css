@@ -1,106 +1,47 @@
-
-
-/****styles for community.php ******/
-
-.forum{
-    margin-bottom: 50px;
-    
-}
-
-.category-container {
-    display: inline-block;
-    width: 100%;
-    background-color: rgb(69, 249, 249);
-    border:  black 1px solid ;
-}
-
-/* Style for spans inside h2 */
-.category-container span {
-    display: inline-block;
-    margin-right: 10px; 
-}
-
-.category-name{
-    width: 80%;
-}
-
-
-.collapse {
-    display: inline-block;
-}
-
-
-.last-post-table {
-    width: 100%;
-    border-collapse: collapse;
-}
-
-.last-post-table td {
-    padding: 10px;
-    border: 1px solid #ddd;
-}
-
-.thread-data-container {
-    width: 60%; 
-}
-
-.last-post-info {
-    width: 40%; 
-}
-
-
-
-
-
-.community-content {
-    padding: 10px; 
-    background-color: #fff; 
-}
-
-.sidebar {
-    
-    padding: 10px;
-    background-color: #fff;
-    border-left: 1px solid #ccc; 
-}
-
-
-.notices {
+.container {
     margin-top: 20px;
-    border: 1px solid #ff9999; 
-    border-radius: 5px; 
-    background-color: #ffe6e6; 
+    background-color: #e9ecef; 
 }
 
+.card-top {
 
-#pagetitle {
-    margin-top: 20px;
-    border-bottom: 1px solid #ccc; 
-    padding-bottom: 10px; 
 }
 
-
-
-/******* Styles for showthread.php ******/
-.post-wrapper {
-    margin-top: 20px; 
+.card-top h2 {
+    margin-bottom: 20px;
 }
 
-.post {
-    margin-bottom: 20px; 
-    border: 1px solid #ccc; 
-    border-radius: 5px; 
-    padding: 10px; 
+.row {
+    margin-bottom: 10px;
+    border-bottom: 1px solid #000000; /* border color */
 }
 
-.post-info {
-    margin-bottom: 10px; 
+.col-8 {
+    font-size: 18px;
+    /* light gray background color */
+    padding: 10px;
+    border-right: 1px solid #010101; /* border color */
 }
 
-.post-content {
-    
+.col {
+    padding: 10px;
+    border-right: 1px solid #030303; /* border color */
 }
 
-.post-content p {
-    
+.topic_starter_username {
+    font-weight: bold;
+}
+
+.reply_count {
+    font-weight: bold;
+    color: #007bff; /* blue color */
+}
+
+.latest-poster {
+    font-weight: bold;
+}
+
+.post-date {
+    font-size: 14px;
+    color: #6c757d; /* gray color */
 }

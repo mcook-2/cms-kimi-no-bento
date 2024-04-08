@@ -1,9 +1,9 @@
 <?php
 // Include database connection
 
-include('../inc/database.php'); // Assuming your database configuration is stored in this file
-include('../inc/config.php');
-include('../inc/header.php');
+include('../inc/database.inc.php');
+include('../inc/config.inc.php');
+include('../inc/header.inc.php');
 
 // Start session
 
@@ -92,24 +92,25 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
         <div <?php echo (!empty($username_or_email_err)) ? 'has-error' : ''; ?>">
             <label for="username_or_email">Username or Email:</label>
-            <input type="text" class="form-control" id="username_or_email" name="username_or_email" value="<?php echo $username_or_email; ?>">
-            <span><?php echo $username_or_email_err; ?></span>
+            <input type="text" class="form-control" id="username_or_email" name="username_or_email" value="<?php echo htmlspecialchars($username_or_email); ?>">
+            <span><?php echo htmlspecialchars($username_or_email_err); ?></span>
         </div>
         <div <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
             <label for="password">Password:</label>
             <input type="password" class="form-control" id="password" name="password">
-            <span><?php echo $password_err; ?></span>
+            <span><?php echo htmlspecialchars($password_err); ?></span>
         </div>
         <button type="submit">Login</button>
     </form>
-    <p>Username:<strong>funguy1337</strong></p>
-    <p>Email: fake@gmail.com</p>
-    <p>Pass: <strong>PASSword123</strong></p>
+    <p>Username:<strong><?php echo htmlspecialchars('funguy1337'); ?></strong></p>
+    <p>Email: <?php echo htmlspecialchars('fake@gmail.com'); ?></p>
+    <p>Pass: <strong><?php echo htmlspecialchars('PASSword123'); ?></strong></p>
 
     <p>Don't have an account? <a href="register.php">Register here</a></p>
 </div>
 
+
 <?php
 // Include footer
-include('../inc/footer.php');
+include('../inc/footer.inc.php');
 ?>

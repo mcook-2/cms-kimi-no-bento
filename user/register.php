@@ -1,6 +1,6 @@
 <?php
-include('../inc/config.php');
-include('../inc/header.php');
+include('../inc/config.inc.php');
+include('../inc/header.inc.php');
 
 // Initialize variables to store submitted values
 $usernameValue = '';
@@ -55,5 +55,5 @@ if (isset($_SESSION['errors'])) {
 
 <?php
 // Include footer
-include('../inc/footer.php');
+include('../inc/footer.inc.php');
 ?>
