@@ -5,7 +5,7 @@ include('inc/header.inc.php');
 
 // Check if topic_id is provided in the URL
 if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
-    $topic_id = $_GET['topic_id'];
+    $topic_id = htmlspecialchars($_GET['topic_id']);
 
     // Fetch topic details
     $stmt = $db->prepare("SELECT t.*, 
@@ -51,6 +51,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                     <div class="post-info">
                         <p>Author: <?= $post['post_author_username'] ?></p>
                         <p>Posted at: <?= $post['created_at'] ?></p>
+                        <p>Title: <?= $post['title'] ?></p> <!-- Display the post title -->
                     </div>
                     <div class="post-content">
                         <?= $post['content'] ?>
@@ -64,10 +65,15 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     <?php if (isLoggedIn()) : ?>
         <div class="reply-form">
             <h3>Reply to this topic</h3>
-            <form method="post">
+            <form method="post" action="backend/submit_post.php">
+                <input type="hidden" name="topic_id" value="<?php echo $topic_id; ?>">
+                <div class="form-group">
+                    <label for="reply_title">Reply Title</label> <!-- Add a label for the title input -->
+                    <input type="text" class="form-control" id="reply_title" name="reply_title"> <!-- Add a text input for the title -->
+                </div>
                 <div class="form-group">
                     <label for="reply_content">Your Reply</label>
-                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3" required></textarea>
+                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3"></textarea>
                 </div>
                 <button type="submit" class="btn btn-primary">Post Reply</button>
             </form>

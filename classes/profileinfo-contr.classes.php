@@ -17,7 +17,7 @@ class ProfileInfoContr extends ProfileInfo
         $profileAbout = "Introduce your self here! whatever floats your boat";
         $profileTitle = "Hi! I am " . $this->username;
 
-        $profileText = "👋 Welcome to my corner of the web. Take a look around and make yourself comfortable.";
+        $profileText = "Welcome to my corner of the web. Take a look around and make yourself comfortable.";
         $this->setProfileInfo($profileAbout, $profileTitle, $profileText, $this->user_id);
     }
 
@@ -30,7 +30,7 @@ class ProfileInfoContr extends ProfileInfo
         }
 
         //update info
-        $this->setProfileInfo($about, $introTitle, $introText, $this->user_id);
+        $this->_updateProfileInfo($about, $introTitle, $introText, $this->user_id);
     }
 
     private function emptyInputCheck($about, $introTitle, $introText)

@@ -57,12 +57,34 @@ class FormValidator
                 }
             }
 
-            $this->sanitizeFields(); // Always sanitize fields
+            if (isset($this->data['reply_title'])) {
+                try {
+                    $this->validateReplyTitle();
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
+
+            if (isset($this->data['reply_title'])) {
+                try {
+                    $this->validateReplyContent();
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
         } catch (Exception $e) {
             $this->errors[] = $e->getMessage();
         }
 
+
+
         return $this->errors;
+    }
+
+
+    public function setRequiredFields($fields)
+    {
+        $this->requiredFields = $fields;
     }
 
 
@@ -75,14 +97,6 @@ class FormValidator
             if (empty($this->data[$field])) {
                 throw new Exception("{$field}: is required");
             }
-        }
-    }
-
-    private function sanitizeFields()
-    {
-        // Sanitize all fields
-        foreach ($this->data as $key => $value) {
-            $this->data[$key] = filter_var($value, FILTER_SANITIZE_SPECIAL_CHARS);
         }
     }
 
@@ -128,6 +142,31 @@ class FormValidator
         $confirmPassword = $this->data['confirm_password'];
         if ($password !== $confirmPassword) {
             throw new Exception("confirm_password: Passwords do not match");
+        }
+    }
+
+
+
+    // for post reply 
+
+    private function validateReplyTitle()
+    {
+        // Check if reply title is empty or too long
+        $reply_title = $this->data['reply_title'];
+        if (empty($reply_title)) {
+            throw new Exception("reply_title: Reply title is required");
+        }
+        if (strlen($reply_title) > 255) {
+            throw new Exception("reply_title: Reply title must be less than 255 characters");
+        }
+    }
+
+    private function validateReplyContent()
+    {
+        // Check if reply content is empty
+        $reply_content = $this->data['reply_content'];
+        if (empty($reply_content)) {
+            throw new Exception("reply_content: Reply content is required");
         }
     }
 }

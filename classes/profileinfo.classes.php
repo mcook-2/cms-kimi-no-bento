@@ -1,39 +1,34 @@
 <?php
 
-
 class ProfileInfo extends Database
 {
     protected function getProfileInfo($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT * FROM profiles WHERE users_id = ?;');
-            $stmt->execute(array($user_id));
+            $stmt = $this->connection()->prepare('SELECT * FROM profiles WHERE user_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->execute();
             $profileData = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $profileData;
         } catch (PDOException $e) {
-
-            // Reset the statement
-            $stmt = null;
-
-            // Redirect back to index 
+            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
     }
 
-    protected function setNewProfileInfo($profileAbout, $profiletitle, $profileText, $user_id)
+    protected function setNewProfileInfo($profileAbout, $profileTitle, $profileText, $user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_about = ?, profiles_introtitle = ?, profiles_introtext = ? WHERE user_id = ? ;');
-            $stmt->execute(array($profileAbout, $profiletitle, $profileText, $user_id));
-            $profileData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $profileData;
+            $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_about = ?, profiles_introtitle = ?, profiles_introtext = ? WHERE user_id = ?');
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->execute();
+            // No need to fetch data after an update operation
         } catch (PDOException $e) {
-
-            // Reset the statement
-            $stmt = null;
-
-            // Redirect back to index 
+            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -42,16 +37,32 @@ class ProfileInfo extends Database
     protected function setProfileInfo($profileAbout, $profileTitle, $profileText, $user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('INSERT INTO profiles  (profiles_about, profiles_introtitle, profiles_introtext, user_id) VALUES (?,?,?,?) ;');
-            $stmt->execute(array($profileAbout, $profileTitle, $profileText, $user_id));
-            $profileData = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $profileData;
+            $stmt = $this->connection()->prepare('INSERT INTO profiles (profiles_about, profiles_introtitle, profiles_introtext, user_id) VALUES (?, ?, ?, ?)');
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->execute();
+            // No need to fetch data after an insert operation
         } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
 
-            // Reset the statement
-            $stmt = null;
-
-            // Redirect back to index 
+    protected function _updateProfileInfo($profileAbout, $profileTitle, $profileText, $user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_about = ?, profiles_introtitle = ?, profiles_introtext = ? WHERE user_id = ?');
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->execute();
+            // No need to fetch data after an update operation
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }

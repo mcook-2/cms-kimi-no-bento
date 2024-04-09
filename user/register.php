@@ -1,5 +1,5 @@
 <?php
-include('../inc/config.inc.php');
+include_once('../inc/config.inc.php');
 include('../inc/header.inc.php');
 
 // Initialize variables to store submitted values
@@ -16,6 +16,7 @@ if (isset($_SESSION['errors'])) {
         $submittedData = $_SESSION['submitted_data'];
         $usernameValue = isset($submittedData['username']) ? $submittedData['username'] : '';
         $emailValue = isset($submittedData['email']) ? $submittedData['email'] : '';
+        unset($_SESSION['submitted_data']);
     }
 }
 ?>
