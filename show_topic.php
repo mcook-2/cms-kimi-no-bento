@@ -6,11 +6,14 @@ include('inc/header.inc.php');
 // Check if topic_id is provided in the URL
 if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     $topic_id = htmlspecialchars($_GET['topic_id']);
+    // might not need to do this twice
 
-    // Fetch topic details
+    // Fetch topic details along with the category name
     $stmt = $db->prepare("SELECT t.*, 
+                                c.name AS category_name,
                                 u.username AS topic_starter_username
                             FROM topics t
+                            LEFT JOIN categories c ON t.category_id = c.category_id
                             LEFT JOIN users u ON t.topic_starter_id = u.user_id
                             WHERE t.topic_id = ?");
     $stmt->execute([$topic_id]);
@@ -33,10 +36,20 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
 ?>
 
 <div class="container">
+
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <li class="breadcrumb-item"><a href="community.php?category=<?= $topic['category_id'] ?>"><?= $topic['category_name'] ?></a></li>
+            <li class="breadcrumb-item active" aria-current="page"><?= $topic['title'] ?></li>
+        </ol>
+    </nav>
+    <h1><?= $topic['category_name'] ?> </h1>
     <h2><?= $topic['title'] ?></h2>
     <div class="card">
         <div class="card-body">
             <div class="topic-info">
+                <?= htmlspecialchars_decode($topic['topic_content']) ?>
                 <p>Started by: <?= $topic['topic_starter_username'] ?></p>
                 <p>Created at: <?= $topic['created_at'] ?></p>
             </div>

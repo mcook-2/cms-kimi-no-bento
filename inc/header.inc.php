@@ -2,6 +2,8 @@
 define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/');
 define('CSS_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/CSS/');
 define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/IMG/');
+define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/tinymce/js/tinymce/');
+
 
 
 function logout()
@@ -35,6 +37,8 @@ if (isset($_POST['logout'])) {
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap.min.css" />
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>styles.css" />
 
+    <script src="<?php echo TINYMCE_URL; ?>tinymce.min.js"></script>
+
 
 </head>
 
@@ -43,6 +47,8 @@ if (isset($_POST['logout'])) {
         <h3>Session Information</h3>
         <pre><?php var_dump($_SESSION); ?></pre>
     </div>
+
+
 
 
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
@@ -55,15 +61,13 @@ if (isset($_POST['logout'])) {
 
             <ul class="navbar-nav mr auto">
                 <li class="nav-item"><a class="nav-link" href=" <?php echo BASE_URL; ?>index.php">Home</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>menu.php">Menu</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>order.php">Order Now</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>community.php">Community</a></li>
+                <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>community.php?category=all">Community</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>blog.php">Blog</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>about.php">About Us</a></li>
 
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <!-- If logged in, show the account and logout links -->
-                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/account.php">Account</a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/account.php"><?php echo $_SESSION['username']; ?></a></li>
                     <li>
                         <form method="post">
                             <button type="submit" name="logout">Logout</button>

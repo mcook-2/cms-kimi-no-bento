@@ -2,7 +2,7 @@
 include_once('../inc/config.inc.php');
 
 include('../inc/header.inc.php');
-
+include('../inc/check_login.inc.php');
 
 include('../classes/database.classes.php');
 include('../classes/profileinfo.classes.php');
