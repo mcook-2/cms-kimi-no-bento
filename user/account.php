@@ -13,7 +13,7 @@ include('../classes/profileinfo-view.classes.php');
 $profileInfo = new ProfileInfoView();
 
 
-
+// need to display html chars
 ?>
 
 
@@ -52,6 +52,25 @@ $profileInfo = new ProfileInfoView();
                             <?php $profileInfo->fetchText($_SESSION["user_id"]); ?>
                         </p>
                     </div>
+                </div>
+                <!-- Center Section -->
+                <div class="card">
+                    <div class="card-header">
+                        <h5>Last 5 Most Recent Posts</h5>
+                    </div>
+                    <div class="card-body">
+                        <?php
+                        // Call the fetchPosts function to get the last 5 most recent posts
+                        $profileInfo->fetchPosts($_SESSION["user_id"]);
+
+                        // Display the last 5 most recent posts
+
+                        ?>
+                    </div>
+                </div>
+                <!-- End Center Section -->
+                <div class="mt-3">
+                    <a href="view_all_posts.php" class="btn btn-secondary">View All Posts</a>
                 </div>
             </div>
         </div>

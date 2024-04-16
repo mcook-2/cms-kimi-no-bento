@@ -42,6 +42,13 @@ $profileInfo = new ProfileInfoView();
     </div>
 </section>
 
+<script>
+    tinymce.init({
+        selector: 'textarea', // change this value according to your HTML
+        menubar: 'file edit view'
+    });
+</script>
+
 
 
 <?php

@@ -67,4 +67,53 @@ class ProfileInfo extends Database
             exit();
         }
     }
+
+    protected function getUserCategories($user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT name FROM categories WHERE user_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $categories;
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+
+    protected function getUserTopics($user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT title, topic_content FROM topics WHERE topic_starter_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $topics;
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+    protected function getUserPosts($user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT title, content FROM posts WHERE author_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $posts;
+        } catch (PDOException $e) {
+            // Handle the exception
+            // For simplicity, redirect to index.php in case of error
+            header("Location: ../index.php");
+            exit();
+        }
+    }
 }

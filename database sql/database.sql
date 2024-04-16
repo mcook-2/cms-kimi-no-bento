@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Apr 07, 2024 at 11:23 PM
+-- Generation Time: Apr 16, 2024 at 05:41 AM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -20,23 +20,9 @@ SET time_zone = "+00:00";
 --
 -- Database: `knb_database`
 --
-CREATE DATABASE IF NOT EXISTS `knb_database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
+DROP DATABASE IF EXISTS `knb_database`;
+CREATE DATABASE `knb_database` DEFAULT CHARACTER SET utf8mb4 COLLATE utf8mb4_general_ci;
 USE `knb_database`;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `bento_pictures`
---
-
-DROP TABLE IF EXISTS `bento_pictures`;
-CREATE TABLE `bento_pictures` (
-  `picture_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `bento_image_url` varchar(225) NOT NULL,
-  `title` varchar(30) NOT NULL,
-  `upload_date` datetime NOT NULL DEFAULT current_timestamp()
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
 
@@ -47,64 +33,18 @@ CREATE TABLE `bento_pictures` (
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `category_id` int(11) NOT NULL,
-  `name` varchar(255) NOT NULL
+  `name` varchar(255) NOT NULL,
+  `user_id` int(11) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
--- --------------------------------------------------------
-
 --
--- Table structure for table `menu_items`
+-- Dumping data for table `categories`
 --
 
-DROP TABLE IF EXISTS `menu_items`;
-CREATE TABLE `menu_items` (
-  `menu_item_id` int(5) NOT NULL,
-  `name` varchar(30) DEFAULT NULL,
-  `description` varchar(255) DEFAULT NULL,
-  `price` float DEFAULT NULL,
-  `image_url` varchar(255) DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `orders_table`
---
-
-DROP TABLE IF EXISTS `orders_table`;
-CREATE TABLE `orders_table` (
-  `order_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `order_date` datetime NOT NULL DEFAULT current_timestamp(),
-  `delivery_date` datetime NOT NULL,
-  `status` varchar(30) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `order_items`
---
-
-DROP TABLE IF EXISTS `order_items`;
-CREATE TABLE `order_items` (
-  `order_item_id` int(11) NOT NULL,
-  `order_id` int(11) NOT NULL,
-  `menu_item_id` int(5) NOT NULL,
-  `quantity` int(10) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `payment_methods`
---
-
-DROP TABLE IF EXISTS `payment_methods`;
-CREATE TABLE `payment_methods` (
-  `method_id` int(11) NOT NULL,
-  `method_name` varchar(50) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+INSERT INTO `categories` (`category_id`, `name`, `user_id`) VALUES
+(1, 'General Topics', 20),
+(5, 'SUPER NEW', 20),
+(7, 'yoooooooooooooooooo', 20);
 
 -- --------------------------------------------------------
 
@@ -117,9 +57,41 @@ CREATE TABLE `posts` (
   `post_id` int(11) NOT NULL,
   `topic_id` int(11) DEFAULT NULL,
   `author_id` int(11) DEFAULT NULL,
+  `title` text NOT NULL,
   `content` text NOT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `posts`
+--
+
+INSERT INTO `posts` (`post_id`, `topic_id`, `author_id`, `title`, `content`, `created_at`) VALUES
+(8, 6, 20, 'hey this is super cool', 'how come i cant make cool stuiff like you', '2024-04-15 22:29:53'),
+(9, 6, 20, '&#60;h1&#62; HUGE &#60;/H&#62;', '&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;&#60;h1&#62; HUGE &#60;/H&#62;', '2024-04-15 22:31:01'),
+(10, 6, 20, '&#60;h2&#62;ehhhhhhhhhhhhh&#60;/h2&#62;', '&#60;h2&#62;ehhhhhhhhhhhhh&#60;/h2&#62;', '2024-04-15 22:31:36');
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `profiles`
+--
+
+DROP TABLE IF EXISTS `profiles`;
+CREATE TABLE `profiles` (
+  `profiles_id` int(11) NOT NULL,
+  `profiles_about` varchar(255) DEFAULT NULL,
+  `profiles_introtitle` varchar(100) DEFAULT NULL,
+  `profiles_introtext` text DEFAULT NULL,
+  `user_id` int(11) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `profiles`
+--
+
+INSERT INTO `profiles` (`profiles_id`, `profiles_about`, `profiles_introtitle`, `profiles_introtext`, `user_id`) VALUES
+(11, '&lt;p&gt;heyeyey&lt;/p&gt;', 'loldeleldeoledodeldol', '&lt;p&gt;&lt;span style=&quot;background-color: #2dc26b;&quot;&gt;dsfasdfsdfewfwqegvwegq234gf3gh4&lt;/span&gt;&lt;/p&gt;', 20);
 
 -- --------------------------------------------------------
 
@@ -143,20 +115,6 @@ INSERT INTO `roles` (`role_id`, `role_name`) VALUES
 -- --------------------------------------------------------
 
 --
--- Table structure for table `subscription_plans`
---
-
-DROP TABLE IF EXISTS `subscription_plans`;
-CREATE TABLE `subscription_plans` (
-  `plan_id` int(11) NOT NULL,
-  `plan_name` varchar(50) NOT NULL,
-  `description` varchar(255) NOT NULL,
-  `price_per_month` decimal(10,2) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table `topics`
 --
 
@@ -165,10 +123,21 @@ CREATE TABLE `topics` (
   `topic_id` int(11) NOT NULL,
   `category_id` int(11) DEFAULT NULL,
   `title` varchar(255) NOT NULL,
+  `topic_content` text NOT NULL,
   `topic_starter_id` int(11) DEFAULT NULL,
   `created_at` timestamp NOT NULL DEFAULT current_timestamp(),
   `reply_count` int(11) DEFAULT 0
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `topics`
+--
+
+INSERT INTO `topics` (`topic_id`, `category_id`, `title`, `topic_content`, `topic_starter_id`, `created_at`, `reply_count`) VALUES
+(2, 1, 'Check out this sick Topic', '&#60;h1&#62;THERE IS SOME COOL STUFF&#38;nbsp;&#60;/h1&#62;', 20, '2024-04-15 21:48:41', 0),
+(6, 7, 'ehhhhhhhhhhhhh', '&#60;p&#62;asdfafefewfwefewfefef&#60;/p&#62;', 20, '2024-04-15 22:11:19', 0),
+(7, 1, 'fasdfasdfsdf', '&#60;p&#62;&#60;strong&#62;asafdasdasdfas f ewfqw&#60;/strong&#62;&#60;/p&#62;&#13;&#10;&#60;p&#62;&#38;nbsp;&#60;/p&#62;&#13;&#10;&#60;h1&#62;&#60;strong&#62;sdfgdfgdfgfg&#60;/strong&#62;&#60;/h1&#62;&#13;&#10;&#60;p style=&#34;text-align: right;&#34;&#62;&#38;nbsp;&#60;/p&#62;&#13;&#10;&#60;blockquote&#62;&#13;&#10;&#60;p style=&#34;text-align: right;&#34;&#62;&#60;strong&#62;sdfgdfgsdfgsdf ggre3wg 3ergh rggh&#60;/strong&#62;&#60;/p&#62;&#13;&#10;&#60;/blockquote&#62;', 20, '2024-04-16 01:38:09', 0),
+(8, 5, 'duper new', '&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Everybody get up, it&#39;s time to slam now&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We got a real jam goin&#39; down&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Come on and slam, and welcome to the jam!&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Come on and slam, if you wanna jam!&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Hey you, whatcha gonna do?&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Hey you, whatcha gonna do?&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Hey you, whatcha gonna do?&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Hey you, whatcha gonna do?&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Party people in the house lets go&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;It&#39;s your boy &#34;Jay Ski&#34; a&#39;ight so&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Pass that thing and watch me flex&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Behind my back, you know what&#39;s next&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;To the jam, all in your face&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Wassup, just feel the bass&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Drop it, rock it, down the room&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Shake it, quake it, space KABOOM...&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Just work that body, work that body make sure you don&#39;t hurt no body&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Get wild and lose your mind take this thing into over-time&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Hey DJ, TURN IT UP&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;QCD gon&#39; burn it up&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon y&#39;all get on the floor so hey, let&#39;s go a&#39;ight&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Everybody get up, it&#39;s time to slam now&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We got a real jam goin&#39; down&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Wave your hands in the air if you feel fine&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We&#39;re gonna take it into overtime&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;C&#39;mon it&#39;s time to get hype say Whoop (there it is!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon all the fellas say Whoop (there it is!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon one time for the ladies say Whoop (there it is!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Now, all, the fellas say Whoop (there it is!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon and run, baby run&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon, c&#39;mon, do it, run baby run&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Yeah, you wanna hoop... so shoot, baby shoot&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Yeah, it&#39;s time to hoop... so shoot, baby shoot baby&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon and slam, and welcome to the jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon and slam, if you wanna jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon and slam, and welcome to the jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon and slam, if you wanna jam&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Slam, Bam, Thank you ma&#39;am, get on the floor and jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;If you see me on the microphone, girl you got me in a zone&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Move!) C&#39;mon, C&#39;mon and start the game&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Move!) Break it down, tell me your name&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Move!) We the team, I&#39;m the coach&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Move!) Let&#39;s dance all night from coast to coast&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Just slide!) Just slide, from left to right&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Just slide!) Just slide, yourself enlight&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;You see me, drop the bass, 3-1-1 all in your face&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Jam on it!) Jam on it, let&#39;s have some fun&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;(Jam on it!) Jam on it, One on One&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;You run the &#34;O&#34; and I run the &#34;D&#34;, so c&#39;mon baby just jam for me&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Everybody get up, it&#39;s time to slam now&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We got a real jam goin&#39; down&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Wave your hands in the air if you feel fine&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We&#39;re gonna take it into overtime&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Hey ladies! (Yeah!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all ready to stop? (NO!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all wanna know why? (Why?)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Cuz it&#39;s a Slam Jam!&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Fellas! (Yeah)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all ready to stop? (NO!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all wanna know why? (Why?)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Yo, it&#39;s time to Slam Jam!&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Everybody get up, it&#39;s time to slam now&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We got a real jam goin&#39; down&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb&#34;&#62;&#60;strong&#62;Wave your hands in the air if you feel fine&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;We&#39;re gonna take it into overtime&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Welcome to the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Here&#39;s your chance, do your dance at the Space Jam&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Alright...&#60;/strong&#62;&#60;/h5&#62;&#13;&#10;&#60;h5 class=&#34;ujudUb WRZytc&#34;&#62;&#60;strong&#62;C&#39;mon, everybody say &#34;Nah Nah Nah Nah Nah&#34;&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon, c&#39;mon, let me hear you say &#34;Hey ey ey O&#34;&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon, c&#39;mon, everybody &#34;Nah Nah Nah Nah Nah&#34;&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Just take the time to say &#34;Hey ey ey O&#34;&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Check it out, check it out&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all ready for this? (You know it!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Nah... y&#39;all ain&#39;t ready!&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all ready for this? (You know it!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon, check it out, y&#39;all ready to jam? (You know it!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Nah... I, I, I don&#39;t think so&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;Y&#39;all ready to jam? (You know it!)&#60;/strong&#62;&#60;br aria-hidden=&#34;true&#34;&#62;&#60;strong&#62;C&#39;mon!&#60;/strong&#62;&#60;/h5&#62;', 20, '2024-04-16 01:45:51', 0);
 
 -- --------------------------------------------------------
 
@@ -191,83 +160,17 @@ CREATE TABLE `users` (
 --
 
 INSERT INTO `users` (`user_id`, `username`, `email`, `password`, `role_id`, `creation_date`) VALUES
-(2, 'onigiri_bonbon', 'onigiri_bonbon@oishii.yumyum', 'gochisosamadeshita', 935, '2024-04-02'),
-(6, 'funguy1337', 'fake@gmail.com', 'PASSword123', 935, '2024-04-06');
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_payments`
---
-
-DROP TABLE IF EXISTS `user_payments`;
-CREATE TABLE `user_payments` (
-  `payment_id` int(11) NOT NULL,
-  `user_id` int(11) NOT NULL,
-  `payment_date` datetime NOT NULL,
-  `amount` decimal(10,2) NOT NULL,
-  `method_id` int(11) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `user_subscriptions`
---
-
-DROP TABLE IF EXISTS `user_subscriptions`;
-CREATE TABLE `user_subscriptions` (
-  `subscription_id` int(11) NOT NULL,
-  `user_id` int(11) DEFAULT NULL,
-  `plan_id` int(11) DEFAULT NULL,
-  `delivery_address` varchar(30) DEFAULT NULL,
-  `start_date` date DEFAULT NULL,
-  `end_date` date DEFAULT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+(20, 'funguy1337', 'fake@gmail.com', 'PASSword123', 935, '2024-04-15');
 
 --
 -- Indexes for dumped tables
 --
 
 --
--- Indexes for table `bento_pictures`
---
-ALTER TABLE `bento_pictures`
-  ADD PRIMARY KEY (`picture_id`),
-  ADD KEY `FK_bento_pictures_users` (`user_id`);
-
---
 -- Indexes for table `categories`
 --
 ALTER TABLE `categories`
   ADD PRIMARY KEY (`category_id`);
-
---
--- Indexes for table `menu_items`
---
-ALTER TABLE `menu_items`
-  ADD PRIMARY KEY (`menu_item_id`);
-
---
--- Indexes for table `orders_table`
---
-ALTER TABLE `orders_table`
-  ADD PRIMARY KEY (`order_id`),
-  ADD KEY `FK_orders_table_users` (`user_id`);
-
---
--- Indexes for table `order_items`
---
-ALTER TABLE `order_items`
-  ADD PRIMARY KEY (`order_item_id`),
-  ADD KEY `FK_order_items_orders_table` (`order_id`),
-  ADD KEY `FK_order_items_menu_items` (`menu_item_id`);
-
---
--- Indexes for table `payment_methods`
---
-ALTER TABLE `payment_methods`
-  ADD PRIMARY KEY (`method_id`);
 
 --
 -- Indexes for table `posts`
@@ -278,16 +181,17 @@ ALTER TABLE `posts`
   ADD KEY `author_id` (`author_id`);
 
 --
+-- Indexes for table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD PRIMARY KEY (`profiles_id`),
+  ADD KEY `profiles_ibfk_1` (`user_id`);
+
+--
 -- Indexes for table `roles`
 --
 ALTER TABLE `roles`
   ADD PRIMARY KEY (`role_id`);
-
---
--- Indexes for table `subscription_plans`
---
-ALTER TABLE `subscription_plans`
-  ADD PRIMARY KEY (`plan_id`);
 
 --
 -- Indexes for table `topics`
@@ -295,7 +199,7 @@ ALTER TABLE `subscription_plans`
 ALTER TABLE `topics`
   ADD PRIMARY KEY (`topic_id`),
   ADD KEY `category_id` (`category_id`),
-  ADD KEY `topic_starter_id` (`topic_starter_id`);
+  ADD KEY `topics_ibfk_2` (`topic_starter_id`);
 
 --
 -- Indexes for table `users`
@@ -305,101 +209,44 @@ ALTER TABLE `users`
   ADD KEY `FK_users_roles` (`role_id`);
 
 --
--- Indexes for table `user_payments`
---
-ALTER TABLE `user_payments`
-  ADD PRIMARY KEY (`payment_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `method_id` (`method_id`);
-
---
--- Indexes for table `user_subscriptions`
---
-ALTER TABLE `user_subscriptions`
-  ADD PRIMARY KEY (`subscription_id`),
-  ADD KEY `user_id` (`user_id`),
-  ADD KEY `plan_id` (`plan_id`);
-
---
 -- AUTO_INCREMENT for dumped tables
 --
-
---
--- AUTO_INCREMENT for table `bento_pictures`
---
-ALTER TABLE `bento_pictures`
-  MODIFY `picture_id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `categories`
 --
 ALTER TABLE `categories`
-  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `orders_table`
---
-ALTER TABLE `orders_table`
-  MODIFY `order_id` int(11) NOT NULL AUTO_INCREMENT;
-
---
--- AUTO_INCREMENT for table `payment_methods`
---
-ALTER TABLE `payment_methods`
-  MODIFY `method_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `category_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=8;
 
 --
 -- AUTO_INCREMENT for table `posts`
 --
 ALTER TABLE `posts`
-  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `post_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
--- AUTO_INCREMENT for table `subscription_plans`
+-- AUTO_INCREMENT for table `profiles`
 --
-ALTER TABLE `subscription_plans`
-  MODIFY `plan_id` int(11) NOT NULL AUTO_INCREMENT;
+ALTER TABLE `profiles`
+  MODIFY `profiles_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=12;
 
 --
 -- AUTO_INCREMENT for table `topics`
 --
 ALTER TABLE `topics`
-  MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `topic_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=9;
 
 --
 -- AUTO_INCREMENT for table `users`
 --
 ALTER TABLE `users`
-  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
-
---
--- AUTO_INCREMENT for table `user_payments`
---
-ALTER TABLE `user_payments`
-  MODIFY `payment_id` int(11) NOT NULL AUTO_INCREMENT;
+  MODIFY `user_id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=21;
 
 --
 -- Constraints for dumped tables
 --
-
---
--- Constraints for table `bento_pictures`
---
-ALTER TABLE `bento_pictures`
-  ADD CONSTRAINT `FK_bento_pictures_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `orders_table`
---
-ALTER TABLE `orders_table`
-  ADD CONSTRAINT `FK_orders_table_users` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
-
---
--- Constraints for table `order_items`
---
-ALTER TABLE `order_items`
-  ADD CONSTRAINT `FK_order_items_menu_items` FOREIGN KEY (`menu_item_id`) REFERENCES `menu_items` (`menu_item_id`),
-  ADD CONSTRAINT `FK_order_items_orders_table` FOREIGN KEY (`order_id`) REFERENCES `orders_table` (`order_id`);
+ALTER TABLE `categories`
+ADD CONSTRAINT `categories_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`);
 
 --
 -- Constraints for table `posts`
@@ -409,31 +256,23 @@ ALTER TABLE `posts`
   ADD CONSTRAINT `posts_ibfk_2` FOREIGN KEY (`author_id`) REFERENCES `users` (`user_id`);
 
 --
+-- Constraints for table `profiles`
+--
+ALTER TABLE `profiles`
+  ADD CONSTRAINT `profiles_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
+
+--
 -- Constraints for table `topics`
 --
 ALTER TABLE `topics`
   ADD CONSTRAINT `topics_ibfk_1` FOREIGN KEY (`category_id`) REFERENCES `categories` (`category_id`),
-  ADD CONSTRAINT `topics_ibfk_2` FOREIGN KEY (`topic_starter_id`) REFERENCES `users` (`user_id`);
+  ADD CONSTRAINT `topics_ibfk_2` FOREIGN KEY (`topic_starter_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 --
 -- Constraints for table `users`
 --
 ALTER TABLE `users`
   ADD CONSTRAINT `FK_users_roles` FOREIGN KEY (`role_id`) REFERENCES `roles` (`role_id`);
-
---
--- Constraints for table `user_payments`
---
-ALTER TABLE `user_payments`
-  ADD CONSTRAINT `user_payments_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `user_payments_ibfk_2` FOREIGN KEY (`method_id`) REFERENCES `payment_methods` (`method_id`);
-
---
--- Constraints for table `user_subscriptions`
---
-ALTER TABLE `user_subscriptions`
-  ADD CONSTRAINT `user_subscriptions_ibfk_1` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
-  ADD CONSTRAINT `user_subscriptions_ibfk_2` FOREIGN KEY (`plan_id`) REFERENCES `subscription_plans` (`plan_id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
