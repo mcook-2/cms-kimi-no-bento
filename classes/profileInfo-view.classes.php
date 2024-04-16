@@ -30,7 +30,7 @@ class ProfileInfoView extends ProfileInfo
         $categories = $this->getUserCategories($user_id);
 
         foreach ($categories as $category) {
-            echo $category["name"] . "<br>";
+            echo $category["name"];
         }
     }
 
@@ -49,8 +49,8 @@ class ProfileInfoView extends ProfileInfo
         $posts = $this->getUserPosts($user_id);
 
         foreach ($posts as $post) {
-            echo $post["title"] . "<br>";
-            echo $post["content"] . "<br>";
+            echo $post["title"];
+            echo $post["content"];
         }
     }
 }
