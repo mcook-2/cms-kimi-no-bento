@@ -1,0 +1,9 @@
+.sorted-asc::after {
+    content: '\25B2'; /* Unicode for upward arrow */
+    margin-left: 5px; /* Adjust as needed */
+}
+
+.sorted-desc::after {
+    content: '\25BC'; /* Unicode for downward arrow */
+    margin-left: 5px; /* Adjust as needed */
+}

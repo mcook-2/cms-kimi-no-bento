@@ -102,9 +102,16 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         </div>
         <button type="submit">Login</button>
     </form>
-    <p>Username:<strong><?php echo htmlspecialchars('funguy1337'); ?></strong></p>
-    <p>Email: <?php echo htmlspecialchars('fake@gmail.com'); ?></p>
-    <p>Pass: <strong><?php echo htmlspecialchars('PASSword123'); ?></strong></p>
+    <h4>User</h4>
+    <p>Username: <strong>funguy1337</strong></p>
+    <p>Email: fake@gmail.com</p>
+    <p>Pass: <strong>PASSword123</strong></p>
+
+    <h4>Admin</h4>
+    <p>Username: <strong>big_boss</strong></p>
+    <p>Email: what_a_thrill.snakeeater@gmail.com</p>
+    <p>Pass: <strong>But youre s0 supreme!</strong></p>
+
 
     <p>Don't have an account? <a href="register.php">Register here</a></p>
 </div>

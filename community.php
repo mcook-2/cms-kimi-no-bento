@@ -3,25 +3,37 @@ include('inc/database.inc.php');
 include_once('inc/config.inc.php');
 include('inc/header.inc.php');
 
-// Fetch categories and their corresponding topics
-$stmt = $db->query("SELECT c.*, 
+if (isLoggedIn()) {
+    // Default sorting option
+    $sort_by = isset($_GET['sort']) ? $_GET['sort'] : 't.date_created';
+
+    // Define allowed sorting options
+    $allowed_sort_fields = ['t.title', 't.date_created', 'latest_post_created_at'];
+    if (!in_array($sort_by, $allowed_sort_fields)) {
+        $sort_by = 't.created_at'; // Default to created date if invalid sort field
+    }
+}
+$sort_by = 't.date_created'; // Default to created date if invalid sort field
+$stmt = $db->prepare("SELECT c.*, 
                             t.*, 
                             u.username AS topic_starter_username, 
-                            MAX(p.created_at) AS latest_post_created_at,
+                            MAX(p.date_created) AS latest_post_created_at,
                             lp.username AS last_poster_username,
                             COUNT(p.post_id) AS reply_count
                         FROM categories c
                         LEFT JOIN topics t ON c.category_id = t.category_id
                         LEFT JOIN users u ON t.topic_starter_id = u.user_id
                         LEFT JOIN (
-                            SELECT topic_id, MAX(created_at) AS latest_post_created_at
+                            SELECT topic_id, MAX(date_created) AS latest_post_created_at
                             FROM posts
                             GROUP BY topic_id
                         ) latest_post ON t.topic_id = latest_post.topic_id
                         LEFT JOIN posts p ON t.topic_id = p.topic_id
                         LEFT JOIN users lp ON p.author_id = lp.user_id
                         GROUP BY c.category_id, t.topic_id
-                        ORDER BY c.category_id, t.created_at DESC");
+                        ORDER BY c.category_id, $sort_by DESC ");
+
+$stmt->execute();
 $categories_topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 // Build an associative array to organize topics by category
@@ -45,6 +57,14 @@ foreach ($categories_topics as $row) {
             <h2>Community Pages</h2>
             <form action="" method="get">
                 <div class="form-group">
+                    <?php if (isLoggedIn()) : ?>
+                        <label for="sort_by">Sort By:</label>
+                        <select id="sort_by" class="form-control" name="sort">
+                            <option value="date_created" <?= ($sort_by === 'date_created') ? 'selected' : '' ?>>Created Date</option>
+                            <option value="latest_post_created_at" <?= ($sort_by === 'latest_post_created_at') ? 'selected' : '' ?>>Latest Post Date</option>
+                            <option value="title" <?= ($sort_by === 'title') ? 'selected' : '' ?>>Title</option>
+                        </select>
+                    <?php endif; ?>
                     <label for="forum_jump">Select Category:</label>
                     <select id="forum_jump" class="form-control" name="category">
                         <option value="all">All Categories</option>
@@ -88,7 +108,7 @@ foreach ($categories_topics as $row) {
                                 </div>
                                 <div class="col">
                                     <span class="topic_starter_username"><?= $topic['topic_starter_username'] ?></span>
-                                    <span class="post-date"><?= $topic['created_at'] ?></span>
+                                    <span class="post-date"><?= $topic['date_created'] ?></span>
                                 </div>
                                 <div class="col">
                                     <span class="reply_count"><?= $topic['reply_count'] ?></span>

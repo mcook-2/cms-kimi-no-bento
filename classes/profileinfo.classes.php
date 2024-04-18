@@ -17,6 +17,45 @@ class ProfileInfo extends Database
         }
     }
 
+    public function getProfilePicture($user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT profiles_pfp FROM profiles WHERE user_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            // Check if a profile picture exists for the user
+            if ($result && isset($result['profiles_pfp'])) {
+                return $result['profiles_pfp']; // Return the profile picture path directly
+            } else {
+                // Return a default profile picture if none is found
+                return '../img/default imgs/cat_bento_1.jpg'; // Replace this with the path to your default profile picture
+            }
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+    public function updateProfilePfp($filePath, $user_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_pfp = ? WHERE user_id = ?');
+            $stmt->bindValue(1, $filePath, PDO::PARAM_STR);
+            $stmt->bindValue(2, $user_id, PDO::PARAM_INT);
+
+            $stmt->execute();
+            return true; // Return true if update was successful
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
     protected function setNewProfileInfo($profileAbout, $profileTitle, $profileText, $user_id)
     {
         try {

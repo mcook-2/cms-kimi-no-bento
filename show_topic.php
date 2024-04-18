@@ -25,7 +25,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                             FROM posts p
                             LEFT JOIN users u ON p.author_id = u.user_id
                             WHERE p.topic_id = ?
-                            ORDER BY p.created_at ASC");
+                            ORDER BY p.date_created ASC");
     $stmt->execute([$topic_id]);
     $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
 } else {
@@ -51,7 +51,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
             <div class="topic-info">
                 <?= htmlspecialchars_decode($topic['topic_content']) ?>
                 <p>Started by: <?= $topic['topic_starter_username'] ?></p>
-                <p>Created at: <?= $topic['created_at'] ?></p>
+                <p>Created at: <?= $topic['date_created'] ?></p>
             </div>
         </div>
     </div>
@@ -63,7 +63,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                 <div class="card-body">
                     <div class="post-info">
                         <p>Author: <?= $post['post_author_username'] ?></p>
-                        <p>Posted at: <?= $post['created_at'] ?></p>
+                        <p>Posted at: <?= $post['date_created'] ?></p>
                         <p>Title: <?= $post['title'] ?></p> <!-- Display the post title -->
                     </div>
                     <div class="post-content">

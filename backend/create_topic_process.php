@@ -44,8 +44,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $topic_starter_id = $_SESSION['user_id'];
 
         if ($category_type === "new") {
-            $stmt = $db->prepare("INSERT INTO categories (name) VALUES (:new_category_name)");
+            $stmt = $db->prepare("INSERT INTO categories (name, user_id) VALUES (:new_category_name, :user_id)");
             $stmt->bindParam(':new_category_name', $new_category_name, PDO::PARAM_STR);
+            $stmt->bindParam(':user_id', $topic_starter_id, PDO::PARAM_INT);
             $stmt->execute();
 
             $category_id = $db->lastInsertId();

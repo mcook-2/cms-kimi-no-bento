@@ -2,8 +2,7 @@
 define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/');
 define('CSS_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/CSS/');
 define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/IMG/');
-define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/tinymce/js/tinymce/');
-
+define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
 
 
 function logout()
@@ -58,31 +57,39 @@ if (isset($_POST['logout'])) {
         </a>
 
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
-
-            <ul class="navbar-nav mr auto">
+            <ul class="navbar-nav mr-auto justify-content-between">
                 <li class="nav-item"><a class="nav-link" href=" <?php echo BASE_URL; ?>index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>community.php?category=all">Community</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>blog.php">Blog</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>about.php">About Us</a></li>
 
                 <?php if (isset($_SESSION['user_id'])) : ?>
-                    <!-- If logged in, show the account and logout links -->
+                    <!-- If logged in, show the account, admin, and logout links -->
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/account.php"><?php echo $_SESSION['username']; ?></a></li>
+                    <?php if ($_SESSION['role_id'] === 666) : ?>
+                        <!-- Show admin link only if the user is an admin -->
+                        <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>admin.php">Admin</a></li>
+                    <?php endif; ?>
                     <li>
                         <form method="post">
-                            <button type="submit" name="logout">Logout</button>
+                            <button type="submit" name="logout" class="btn btn-link">Logout</button>
                         </form>
                     </li>
                 <?php else : ?>
                     <!-- If not logged in, show the login and register links -->
-                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/login.php">Login / Register </a></li>
+                    <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/login.php">Login / Register</a></li>
                 <?php endif; ?>
 
             </ul>
-            <form class="form-inline my-2 my-lg-0">
-                <input class="form-control mr-sm-2" type="search" placeholder="Search" aria-label="Search">
-                <button class="btn btn-outline-success my-2 my-sm-0" type="submit">Search</button>
+
+            <form class="form-inline my-7 my-lg-0">
+                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
+                <div class="input-group-append">
+                    <button class="btn btn-outline-secondary" type="button" id="search-btn1">Search</button>
+                </div>
             </form>
         </div>
     </nav>
+
+
     </header>

@@ -53,4 +53,11 @@ class ProfileInfoView extends ProfileInfo
             echo $post["content"];
         }
     }
+
+    public function fetchProfilePicture($user_id)
+    {
+        $profilePicture = $this->getProfilePicture($user_id);
+        // Output the profile picture path
+        return $profilePicture;
+    }
 }

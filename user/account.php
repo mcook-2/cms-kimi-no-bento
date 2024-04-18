@@ -19,15 +19,40 @@ $profileInfo = new ProfileInfoView();
 
 
 
-<div class="container mt-5">
-    <div class="row">
+<div class="container-md">
+    <div class="row ">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
+
+                    <div class="profile-info-img">
+                        <?php
+                        // Check if the user has already uploaded a profile picture
+                        $profilePicture = $profileInfo->fetchProfilePicture($_SESSION["user_id"]);
+                        if (!empty($profilePicture)) {
+                            echo '<img src="' . $profilePicture . '" class="card-img-top" alt="Profile Picture">';
+                        } else {
+                            echo '<img src="..\img\default imgs\cat_bento_1.jpg" class="card-img-top" alt="Profile Picture">';
+                        }
+                        ?>
+                        <a href="profile_settings.php" class="btn btn-primary">Profile Settings</a>
+                        <!-- Add a button to upload a new profile picture -->
+                        <form action="../backend/profile_upload_pfp.php" method="post" enctype="multipart/form-data" id="profilePictureForm">
+                            <input type="file" name="profilePicture" accept="image/*">
+                            <button type="submit" class="btn btn-primary">Upload New PFP</button>
+                        </form>
+                        <form action="../backend/profile_delete_pfp.inc.php" method="post" id="deleteProfilePictureForm">
+                            <input type="hidden" name="deleteProfile" id="deleteProfile" value="delete_pfp">
+                            <!-- "Delete" button -->
+                            <button type="submit" class="btn btn-danger" id="deleteProfilePicture">Delete</button>
+                        </form>
+                        <!-- Add a button to delete the existing profile picture -->
+
+                    </div>
+
+
                 </div>
-                <div class="profile-info-img"><img src="https://via.placeholder.com/150" class="card-img-top" alt="Profile Picture">
-                    <a href="profile_settings.php" class="btn btn-primary">Profile Settings</a>
-                </div>
+
                 <div class="card-body">
                     <h4 class="card-title"> <?php echo $_SESSION["username"]; ?>
                     </h4>
