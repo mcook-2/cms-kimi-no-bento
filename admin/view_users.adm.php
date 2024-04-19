@@ -14,15 +14,56 @@ $orderDir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'ASC';
 // Check if search criteria is set
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
+// Define the number of items per page
+$itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10;
+
+
+// Get the current page number, default to 1 if not set
+$page = isset($_GET['page']) ? $_GET['page'] : 1;
+
+// Calculate the offset
+$offset = ($page - 1) * $itemsPerPage;
+
 // Query to fetch users with their roles from the database
 $stmt = $db->prepare("SELECT users.user_id, users.username, users.email, roles.role_name, users.date_created 
                     FROM users 
                     INNER JOIN roles ON users.role_id = roles.role_id
                     WHERE users.username LIKE :searchTerm OR users.email LIKE :searchTerm
-                    ORDER BY $orderBy $orderDir");
+                    ORDER BY $orderBy $orderDir
+                    LIMIT :offset, :itemsPerPage");
 $stmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
+$stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
+$stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+$pgStmt = $db->prepare("SELECT users.user_id, users.username, users.email, roles.role_name, users.date_created 
+                        FROM users 
+                        INNER JOIN roles ON users.role_id = roles.role_id
+                        WHERE users.username LIKE :searchTerm OR users.email LIKE :searchTerm
+                        ORDER BY $orderBy $orderDir");
+$pgStmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
+$pgStmt->execute();
+$pgStmt->fetchAll(PDO::FETCH_ASSOC);
+
+// Count total number of results after fetching the data
+$totalResults = $pgStmt->rowCount();
+
+// Calculate total number of pages
+$totalPages = ceil($totalResults / $itemsPerPage);
+
+var_dump($totalPages);
+
+// Pagination links
+// Pagination links
+$paginationLinks = '';
+for ($i = 1; $i <= $totalPages; $i++) {
+    $activeClass = ($page == $i) ? 'active' : '';
+    // Include $itemsPerPage and $searchTerm as parameters in the pagination links
+    $paginationLinks .= "<li class='page-item $activeClass'><a class='page-link' href='?page=$i&items_per_page=$itemsPerPage&search=" . urlencode($searchTerm) . "'>$i</a></li>";
+}
+
+
 
 function highlightSearchTerm($text, $searchTerm)
 {
@@ -31,6 +72,8 @@ function highlightSearchTerm($text, $searchTerm)
     }
     return $text;
 }
+
+
 ?>
 
 <?php include('sidebar.adm.php'); ?>
@@ -60,13 +103,14 @@ function highlightSearchTerm($text, $searchTerm)
                     <option value="DESC" <?= $orderDir == 'DESC' ? 'selected' : '' ?>>DESC</option>
                 </select>
             </div>
+            <input type="hidden" name="items_per_page" value="<?= $itemsPerPage ?>">
             <button type="submit" class="btn btn-primary">Search & Sort</button>
         </form>
     </div>
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
-                <th class="<?= $orderBy == 'user_id' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Topic id</th>
+                <th class="<?= $orderBy == 'user_id' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">User id</th>
                 <th class="<?= $orderBy == 'username' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Username</th>
                 <th class="<?= $orderBy == 'email' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Email</th>
                 <th class="<?= $orderBy == 'role_name' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Role</th>
@@ -77,18 +121,36 @@ function highlightSearchTerm($text, $searchTerm)
             <?php foreach ($users as $user) : ?>
                 <tr>
                     <th scope="row"><?= $user['user_id'] ?></th>
-                    <td><?= highlightSearchTerm($user['username'], $searchTerm) ?></td>
-                    <td><?= highlightSearchTerm($user['email'], $searchTerm) ?></td>
-                    <td><?= $user['role_name'] ?></td>
-                    <td><?= $user['date_created'] ?></td>
+                    <td><?= highlightSearchTerm(htmlspecialchars($user['username']), $searchTerm) ?></td>
+                    <td><?= highlightSearchTerm(htmlspecialchars($user['email']), $searchTerm) ?></td>
+                    <td><?= highlightSearchTerm(htmlspecialchars($user['role_name']), $searchTerm) ?></td>
+                    <td><?= htmlspecialchars($user['date_created']) ?></td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
     </table>
+
+    <!-- Display pagination links -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <?= $paginationLinks ?>
+
+        </ul>
+        <div class="mb-2">
+            <!-- Display total number of results -->
+            <span>Total Results: <?= $totalResults ?></span>
+            <!-- Form with links for choosing items per page -->
+            <form method="GET" class="d-inline ml-3">
+                <span class="mr-2 <?= $itemsPerPage == 1 ? 'selected' : '' ?>"><a href="?items_per_page=1">1</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 5 ? 'selected' : '' ?>"><a href="?items_per_page=5">5</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 10 ? 'selected' : '' ?>"><a href="?items_per_page=10">10</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 20 ? 'selected' : '' ?>"><a href="?items_per_page=20">20</a></span>
+                <span class="<?= $itemsPerPage == 50 ? 'selected' : '' ?>"><a href="?items_per_page=50">50</a></span>
+            </form>
+        </div>
+
+    </nav>
 </main>
-
-
-
 
 <?php include('footer.adm.php'); ?>
 </body>

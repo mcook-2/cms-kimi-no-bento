@@ -45,3 +45,7 @@
     font-size: 14px;
     color: #6c757d; /* gray color */
 }
+
+.mr-2.selected a {
+    text-decoration: underline;
+}

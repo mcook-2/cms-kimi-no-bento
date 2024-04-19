@@ -52,6 +52,19 @@ foreach ($categories_topics as $row) {
 }
 ?>
 <div class="container">
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <?php if (isset($_GET['category']) && $_GET['category'] !== 'all' && isset($category_topics_array[$_GET['category']])) : ?>
+                <?php $selected_category_id = $_GET['category']; ?>
+                <?php $selected_category_name = $category_topics_array[$selected_category_id]['category']; ?>
+                <li class="breadcrumb-item active" aria-current="page"><?= $selected_category_name ?></li>
+            <?php else : ?>
+                <li class="breadcrumb-item active" aria-current="page">All Categories</li>
+            <?php endif; ?>
+        </ol>
+    </nav>
+
     <div class="card">
         <div class="card-top">
             <h2>Community Pages</h2>

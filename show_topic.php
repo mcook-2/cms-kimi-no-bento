@@ -59,7 +59,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     <div class="post-list">
         <h3>Posts</h3>
         <?php foreach ($posts as $post) : ?>
-            <div class="card">
+            <div id="post_<?php echo $post['post_id']; ?>" class="card">
                 <div class="card-body">
                     <div class="post-info">
                         <p>Author: <?= $post['post_author_username'] ?></p>
@@ -75,21 +75,45 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     </div>
 
     <!-- Reply Form -->
+
+
     <?php if (isLoggedIn()) : ?>
         <div class="reply-form">
             <h3>Reply to this topic</h3>
             <form method="post" action="backend/submit_post.php">
                 <input type="hidden" name="topic_id" value="<?php echo $topic_id; ?>">
                 <div class="form-group">
-                    <label for="reply_title">Reply Title</label> <!-- Add a label for the title input -->
-                    <input type="text" class="form-control" id="reply_title" name="reply_title"> <!-- Add a text input for the title -->
+                    <label for="reply_title">Reply Title</label>
+                    <input type="text" class="form-control" id="reply_title" name="reply_title">
                 </div>
                 <div class="form-group">
                     <label for="reply_content">Your Reply</label>
                     <textarea class="form-control" id="reply_content" name="reply_content" rows="3"></textarea>
                 </div>
-                <button type="submit" class="btn btn-primary">Post Reply</button>
-            </form>
+                <form action="" method="POST">
+                    <img src="inc/captcha.inc.php" />
+                    <br />
+                    <br />
+                    <input type="text" name="captcha" />
+                    <?php
+                    if (isset($_POST['verify'])) {
+                        if (!empty($_POST['captcha'])) {
+                            if ($_SESSION['captcha'] == $_POST['captcha']) {
+                                echo "<label class='text-success'>Validated</label>";
+                            } else {
+                                echo "<label class='text-danger'>Invalid captcha!</label>";
+                            }
+                        } else {
+                            echo "<label class='text-warning'>Please fill up the required field!</label>";
+                        }
+                    }
+                    ?>
+                    <br /><br />
+                    <button name="verify" class="btn btn-primary">Verify</button>
+
+                    <button type="submit" class="btn btn-primary">Post Reply</button>
+                </form>
+
         </div>
     <?php else : ?>
         <div class="alert alert-info" role="alert">

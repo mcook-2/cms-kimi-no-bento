@@ -81,13 +81,14 @@ if (isset($_POST['logout'])) {
                 <?php endif; ?>
 
             </ul>
-
-            <form class="form-inline my-7 my-lg-0">
-                <input type="text" class="form-control" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
+            <form class="form-inline my-7 my-lg-0" action="<?php echo BASE_URL; ?>/search.php" method="GET">
+                <input type="text" class="form-control" name="query" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
+                <input type="hidden" name="page" value="1"> <!-- Include hidden input for page number -->
                 <div class="input-group-append">
-                    <button class="btn btn-outline-secondary" type="button" id="search-btn1">Search</button>
+                    <button class="btn btn-outline-secondary" type="submit" id="search-btn1">Search</button>
                 </div>
             </form>
+
         </div>
     </nav>
 
