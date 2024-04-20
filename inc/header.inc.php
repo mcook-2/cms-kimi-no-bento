@@ -23,7 +23,6 @@ if (isset($_POST['logout'])) {
     logout();
 }
 ?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -35,34 +34,23 @@ if (isset($_POST['logout'])) {
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap-grid.min.css" />
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap.min.css" />
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>styles.css" />
-
     <script src="<?php echo TINYMCE_URL; ?>tinymce.min.js"></script>
-
-
 </head>
 
 <body>
-    <div>
-        <h3>Session Information</h3>
-        <pre><?php var_dump($_SESSION); ?></pre>
-    </div>
-
-
-
-
     <nav class="navbar navbar-expand-lg navbar-light bg-light">
         <a class="navbar-brand" href="#">
-            <img src="<?php echo IMG_URL; ?>logo kimi no bento.png" alt="Logo" width="200" height="200" class="d-inline-block">
+            <img src="<?php echo IMG_URL; ?>logo_kimi_no_bento.png" alt="Logo" width="200" height="200" class="d-inline-block">
             Kimi no Bento
         </a>
-
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
             <ul class="navbar-nav mr-auto justify-content-between">
                 <li class="nav-item"><a class="nav-link" href=" <?php echo BASE_URL; ?>index.php">Home</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>community.php?category=all">Community</a></li>
-                <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>blog.php">Blog</a></li>
                 <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>about.php">About Us</a></li>
-
                 <?php if (isset($_SESSION['user_id'])) : ?>
                     <!-- If logged in, show the account, admin, and logout links -->
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/account.php"><?php echo $_SESSION['username']; ?></a></li>
@@ -79,18 +67,13 @@ if (isset($_POST['logout'])) {
                     <!-- If not logged in, show the login and register links -->
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/login.php">Login / Register</a></li>
                 <?php endif; ?>
-
             </ul>
             <form class="form-inline my-7 my-lg-0" action="<?php echo BASE_URL; ?>/search.php" method="GET">
                 <input type="text" class="form-control" name="query" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
-                <input type="hidden" name="page" value="1"> <!-- Include hidden input for page number -->
+                <input type="hidden" name="page" value="1"> <!-- hidden input for page number -->
                 <div class="input-group-append">
                     <button class="btn btn-outline-secondary" type="submit" id="search-btn1">Search</button>
                 </div>
             </form>
-
         </div>
     </nav>
-
-
-    </header>

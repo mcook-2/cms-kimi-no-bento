@@ -2,8 +2,6 @@
 
 include_once('config.inc.php');
 
-//session_start();
-
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
     $id = $_SESSION["user_id"];
@@ -19,6 +17,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     $profileInfo = new ProfileInfoContr($id, $username);
 
     $profileInfo->updateProfileInfo($about, $introTitle, $introText);
+
 
     header("location: ../user/account.php?error=none");
 }

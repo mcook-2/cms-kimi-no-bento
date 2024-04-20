@@ -36,7 +36,6 @@ $stmt = $db->prepare("SELECT c.*,
 $stmt->execute();
 $categories_topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Build an associative array to organize topics by category
 $category_topics_array = [];
 foreach ($categories_topics as $row) {
     $category_id = $row['category_id'];
@@ -65,82 +64,85 @@ foreach ($categories_topics as $row) {
         </ol>
     </nav>
 
-    <div class="card">
-        <div class="card-top">
-            <h2>Community Pages</h2>
-            <form action="" method="get">
-                <div class="form-group">
-                    <?php if (isLoggedIn()) : ?>
-                        <label for="sort_by">Sort By:</label>
-                        <select id="sort_by" class="form-control" name="sort">
-                            <option value="date_created" <?= ($sort_by === 'date_created') ? 'selected' : '' ?>>Created Date</option>
-                            <option value="latest_post_created_at" <?= ($sort_by === 'latest_post_created_at') ? 'selected' : '' ?>>Latest Post Date</option>
-                            <option value="title" <?= ($sort_by === 'title') ? 'selected' : '' ?>>Title</option>
-                        </select>
-                    <?php endif; ?>
-                    <label for="forum_jump">Select Category:</label>
-                    <select id="forum_jump" class="form-control" name="category">
-                        <option value="all">All Categories</option>
-                        <?php foreach ($category_topics_array as $category_id => $category_data) : ?>
-                            <option value="<?= $category_id ?>"><?= $category_data['category'] ?></option>
-                        <?php endforeach; ?>
-                    </select>
-                </div>
-                <button type="submit" class="btn btn-primary">Submit</button>
-                <?php if (isLoggedIn()) : ?>
-                    <a href="create_topic.php" class="btn btn-success">Create New Topic</a>
-                <?php endif; ?>
-            </form>
-            <div class="row">
-                <div class="col-8">
-                    <strong>Topic & Pages</strong>
-                </div>
-                <div class="col">
-                    <strong>Topic Starter</strong>
-                </div>
-                <div class="col">
-                    <strong>Replies</strong>
-                </div>
-                <div class="col">
-                    <strong>Last Post</strong>
-                </div>
-            </div>
-        </div>
-        <div class="card-body">
-            <?php if (isset($_GET['category'])) : ?>
-                <?php $selected_category_id = $_GET['category']; ?>
-                <?php foreach ($category_topics_array as $category_id => $category_data) : ?>
-                    <?php if ($selected_category_id == 'all' || $selected_category_id == $category_id) : ?>
-                        <h3><?= $category_data['category'] ?></h3>
-                        <?php foreach ($category_data['topics'] as $topic) : ?>
-                            <div class="row">
-                                <div class="col-8">
-                                    <h4><a href="show_topic.php?topic_id=<?= $topic['topic_id'] ?>"><?= $topic['title'] ?></a></h4>
-                                    <p><?= strlen($topic['topic_content']) > 250 ? substr(strip_tags(htmlspecialchars_decode($topic['topic_content'])), 0, 250) . '...' : strip_tags(htmlspecialchars_decode($topic['topic_content'])) ?></p>
-
-                                </div>
-                                <div class="col">
-                                    <span class="topic_starter_username"><?= $topic['topic_starter_username'] ?></span>
-                                    <span class="post-date"><?= $topic['date_created'] ?></span>
-                                </div>
-                                <div class="col">
-                                    <span class="reply_count"><?= $topic['reply_count'] ?></span>
-                                </div>
-                                <div class="col">
-                                    <span class="latest-poster">
-                                        <?= $topic['last_poster_username'] ?>
-                                        <span class="post-date"><?= $topic['latest_post_created_at'] ?></span>
-                                    </span>
-                                </div>
+    <div class="community">
+        <div class="community-container">
+            <div class="community-top ">
+                <h2>Community Pages</h2>
+                <form action="#" method="get" class="mb-3">
+                    <div class="form-row">
+                        <?php if (isLoggedIn()) : ?>
+                            <div class="form-group col-md-4">
+                                <label for="sort_by">Sort By:</label>
+                                <select id="sort_by" class="form-control" name="sort">
+                                    <option value="date_created" <?= ($sort_by === 'date_created') ? 'selected' : '' ?>>Created Date</option>
+                                    <option value="latest_post_created_at" <?= ($sort_by === 'latest_post_created_at') ? 'selected' : '' ?>>Latest Post Date</option>
+                                    <option value="title" <?= ($sort_by === 'title') ? 'selected' : '' ?>>Title</option>
+                                </select>
                             </div>
-                        <?php endforeach; ?>
-                    <?php endif; ?>
-                <?php endforeach; ?>
-            <?php endif; ?>
+                        <?php endif; ?>
+                        <div class="form-group col-md-4">
+                            <label for="forum_jump">Select Category:</label>
+                            <select id="forum_jump" class="form-control" name="category">
+                                <option value="all">All Categories</option>
+                                <?php foreach ($category_topics_array as $category_id => $category_data) : ?>
+                                    <option value="<?= $category_id ?>"><?= $category_data['category'] ?></option>
+                                <?php endforeach; ?>
+                            </select>
+                        </div>
+                        <div class="form-group col-md-4 align-self-end">
+                            <button type="submit" class="btn btn-primary align-bottom ">Submit</button>
+                            <?php if (isLoggedIn()) : ?>
+                                <a href="create_topic.php" class="btn btn-success align-top">Create New Topic</a>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                </form>
+            </div>
+            <div class="table-responsive">
+                <table class="table table-bordered bg-light">
+                    <thead class="thead-dark">
+                        <tr>
+                            <th scope="col">Topic & Pages</th>
+                            <th scope="col">Topic Starter</th>
+                            <th scope="col">Replies</th>
+                            <th scope="col">Last Post</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <?php if (isset($_GET['category'])) : ?>
+                            <?php $selected_category_id = $_GET['category']; ?>
+                            <?php foreach ($category_topics_array as $category_id => $category_data) : ?>
+                                <?php if ($selected_category_id == 'all' || $selected_category_id == $category_id) : ?>
+                                    <tr>
+                                        <td colspan="4" class="font-weight-bold"><?= $category_data['category'] ?></td>
+                                    </tr>
+                                    <?php foreach ($category_data['topics'] as $topic) : ?>
+                                        <tr>
+                                            <td>
+                                                <h4><a href="show_topic.php?topic_id=<?= $topic['topic_id'] ?>"><?= $topic['title'] ?></a></h4>
+                                                <p><?= strlen($topic['topic_content']) > 250 ? substr(strip_tags(htmlspecialchars_decode($topic['topic_content'])), 0, 250) . '...' : strip_tags(htmlspecialchars_decode($topic['topic_content'])) ?></p>
+                                            </td>
+                                            <td>
+                                                <span class="topic_starter_username"><?= $topic['topic_starter_username'] ?></span><br>
+                                                <span class="post-date"><?= $topic['date_created'] ?></span>
+                                            </td>
+                                            <td>
+                                                <span class="reply_count"><?= $topic['reply_count'] ?></span>
+                                            </td>
+                                            <td>
+                                                <span class="latest-poster"><?= $topic['last_poster_username'] ?><br><span class="post-date"><?= $topic['latest_post_created_at'] ?></span></span>
+                                            </td>
+                                        </tr>
+                                    <?php endforeach; ?>
+                                <?php endif; ?>
+                            <?php endforeach; ?>
+                        <?php endif; ?>
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
-
 
 <?php
 include('inc/footer.inc.php');

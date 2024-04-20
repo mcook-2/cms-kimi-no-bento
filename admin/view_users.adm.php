@@ -1,5 +1,6 @@
 <?php
 // Include necessary files
+require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 include('../classes/database.classes.php');
 include('../classes/profileinfo.classes.php');
@@ -52,9 +53,6 @@ $totalResults = $pgStmt->rowCount();
 // Calculate total number of pages
 $totalPages = ceil($totalResults / $itemsPerPage);
 
-var_dump($totalPages);
-
-// Pagination links
 // Pagination links
 $paginationLinks = '';
 for ($i = 1; $i <= $totalPages; $i++) {
@@ -80,6 +78,7 @@ function highlightSearchTerm($text, $searchTerm)
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <h2>View Users</h2>
+
     <div class="mb-2">
         <form method="get" class="form-inline">
             <div class="form-group mr-2">
@@ -115,6 +114,7 @@ function highlightSearchTerm($text, $searchTerm)
                 <th class="<?= $orderBy == 'email' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Email</th>
                 <th class="<?= $orderBy == 'role_name' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Role</th>
                 <th class="<?= $orderBy == 'date_created' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Date Created</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -125,9 +125,19 @@ function highlightSearchTerm($text, $searchTerm)
                     <td><?= highlightSearchTerm(htmlspecialchars($user['email']), $searchTerm) ?></td>
                     <td><?= highlightSearchTerm(htmlspecialchars($user['role_name']), $searchTerm) ?></td>
                     <td><?= htmlspecialchars($user['date_created']) ?></td>
+                    <td>
+                        <a href="edit_user.adm.php?user_id=<?= $user['user_id'] ?>">Edit</a>
+                        <!-- Form for deletion -->
+                        <form action="delete.adm.php" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="entity" value="user">
+                            <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                            <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>
+
     </table>
 
     <!-- Display pagination links -->

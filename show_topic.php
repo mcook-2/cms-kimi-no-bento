@@ -33,6 +33,8 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     header("Location: error.php");
     exit;
 }
+
+
 ?>
 
 <div class="container">
@@ -64,7 +66,7 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                     <div class="post-info">
                         <p>Author: <?= $post['post_author_username'] ?></p>
                         <p>Posted at: <?= $post['date_created'] ?></p>
-                        <p>Title: <?= $post['title'] ?></p> <!-- Display the post title -->
+                        <p>Title: <?= $post['title'] ?></p>
                     </div>
                     <div class="post-content">
                         <?= $post['content'] ?>
@@ -75,8 +77,6 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     </div>
 
     <!-- Reply Form -->
-
-
     <?php if (isLoggedIn()) : ?>
         <div class="reply-form">
             <h3>Reply to this topic</h3>
@@ -90,31 +90,30 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                     <label for="reply_content">Your Reply</label>
                     <textarea class="form-control" id="reply_content" name="reply_content" rows="3"></textarea>
                 </div>
-                <form action="" method="POST">
-                    <img src="inc/captcha.inc.php" />
-                    <br />
-                    <br />
-                    <input type="text" name="captcha" />
-                    <?php
-                    if (isset($_POST['verify'])) {
-                        if (!empty($_POST['captcha'])) {
-                            if ($_SESSION['captcha'] == $_POST['captcha']) {
-                                echo "<label class='text-success'>Validated</label>";
-                            } else {
-                                echo "<label class='text-danger'>Invalid captcha!</label>";
-                            }
-                        } else {
-                            echo "<label class='text-warning'>Please fill up the required field!</label>";
-                        }
-                    }
-                    ?>
-                    <br /><br />
-                    <button name="verify" class="btn btn-primary">Verify</button>
 
-                    <button type="submit" class="btn btn-primary">Post Reply</button>
-                </form>
-
+                <button type="submit" class="btn btn-primary">Post Reply</button>
+            </form>
+            <form action="#" method="POST">
+                <img src="inc/captcha.inc.php" alt="captcha" />
+                <br />
+                <br />
+                <input type="text" name="captcha" />
+                <?php if (isset($_POST['verify'])) : ?>
+                    <?php if (!empty($_POST['captcha'])) : ?>
+                        <?php if ($_SESSION['captcha'] == $_POST['captcha']) : ?>
+                            <label class='text-success'>Validated</label>
+                        <?php else : ?>
+                            <label class='text-danger'>Invalid captcha!</label>
+                        <?php endif; ?>
+                    <?php else : ?>
+                        <label class='text-warning'>Please fill up the required field!</label>
+                    <?php endif; ?>
+                <?php endif; ?>
+                <br /><br />
+                <button name="verify" class="btn btn-primary">Verify</button>
+            </form>
         </div>
+
     <?php else : ?>
         <div class="alert alert-info" role="alert">
             You need to <a href="user/login.php">log in</a> or <a href="user/register.php">register</a> to post a reply.

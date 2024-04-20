@@ -12,8 +12,4 @@ if (
     header('HTTP/1.1 401 Unauthorized');
     header('WWW-Authenticate: Basic realm="Our Blog"');
     exit("Access Denied: Username and password required.");
-} else {
-    // Redirect to the dashboard page
-    header('Location: admin/dashboard.adm.php');
-    exit;
 }

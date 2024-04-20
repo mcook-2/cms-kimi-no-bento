@@ -1,11 +1,8 @@
 <?php
-// Include database connection
 
 include('../inc/database.inc.php');
 include('../inc/config.inc.php');
 include('../inc/header.inc.php');
-
-// Start session
 
 // Initialize variables for form data
 $username_or_email = $password = "";
@@ -76,48 +73,77 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "Oops! Something went wrong. Please try again later.";
             }
 
-            // Close statement
             unset($stmt);
         }
     }
 
-    // Close database connection
     unset($db);
 }
 ?>
 
 <!-- Login form -->
 <div class="login_container">
-    <h2>Login</h2>
-    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-        <div <?php echo (!empty($username_or_email_err)) ? 'has-error' : ''; ?>">
-            <label for="username_or_email">Username or Email:</label>
-            <input type="text" class="form-control" id="username_or_email" name="username_or_email" value="<?php echo htmlspecialchars($username_or_email); ?>">
-            <span><?php echo htmlspecialchars($username_or_email_err); ?></span>
+    <div class="container">
+        <nav aria-label="breadcrumb">
+            <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
+                <li class="breadcrumb-item active" aria-current="page">Login</li>
+            </ol>
+        </nav>
+        <div class="row justify-content-center">
+            <div class="col-md-6">
+                <div class="login_container p-4">
+                    <h2>Login</h2>
+                    <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
+                        <div <?php echo (!empty($username_or_email_err)) ? 'has-error' : ''; ?>">
+                            <label for="username_or_email">Username or Email:</label>
+                            <input type="text" class="form-control" id="username_or_email" name="username_or_email" value="<?php echo htmlspecialchars($username_or_email); ?>">
+                            <span><?php echo htmlspecialchars($username_or_email_err); ?></span>
+                        </div>
+                        <div <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+                            <label for="password">Password:</label>
+                            <input type="password" class="form-control" id="password" name="password">
+                            <span><?php echo htmlspecialchars($password_err); ?></span>
+                        </div>
+
+                        <button class="btn btn-primary w-100 px-4 type=" submit">Login</button>
+                    </form>
+                    <div class="col-md-auto  ">
+                        <p>Don't have an account? <a href="register.php">Register here</a></p>
+                    </div>
+                    <!-- User details dropdown -->
+                    <div class="dropdown mt-4">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="userDropdown" data-toggle="collapse" data-target="#userDetails" aria-expanded="false" aria-controls="userDetails">
+                            User Details
+                        </button>
+                        <div class="collapse" id="userDetails">
+                            <h4>User</h4>
+                            <p>Username: <strong>funguy1337</strong></p>
+                            <p>Email: fake@gmail.com</p>
+                            <p>Pass: <strong>PASSword123</strong></p>
+                        </div>
+                    </div>
+
+                    <!-- Admin details dropdown -->
+                    <div class="dropdown mt-4">
+                        <button class="btn btn-secondary dropdown-toggle" type="button" id="adminDropdown" data-toggle="collapse" data-target="#adminDetails" aria-expanded="false" aria-controls="adminDetails">
+                            Admin Details
+                        </button>
+                        <div class="collapse" id="adminDetails">
+                            <h4>Admin</h4>
+                            <p>Username: <strong>big_boss</strong></p>
+                            <p>Email: what_a_thrill.snakeeater@gmail.com</p>
+                            <p>Pass: <strong>But youre s0 supreme!</strong></p>
+                        </div>
+                    </div>
+
+
+                </div>
+            </div>
         </div>
-        <div <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
-            <label for="password">Password:</label>
-            <input type="password" class="form-control" id="password" name="password">
-            <span><?php echo htmlspecialchars($password_err); ?></span>
-        </div>
-        <button type="submit">Login</button>
-    </form>
-    <h4>User</h4>
-    <p>Username: <strong>funguy1337</strong></p>
-    <p>Email: fake@gmail.com</p>
-    <p>Pass: <strong>PASSword123</strong></p>
-
-    <h4>Admin</h4>
-    <p>Username: <strong>big_boss</strong></p>
-    <p>Email: what_a_thrill.snakeeater@gmail.com</p>
-    <p>Pass: <strong>But youre s0 supreme!</strong></p>
+    </div>
 
 
-    <p>Don't have an account? <a href="register.php">Register here</a></p>
-</div>
-
-
-<?php
-// Include footer
-include('../inc/footer.inc.php');
-?>
+    <?php
+    include('../inc/footer.inc.php');
+    ?>

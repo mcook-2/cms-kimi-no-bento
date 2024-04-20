@@ -29,7 +29,7 @@ class ProfileInfo extends Database
                 return $result['profiles_pfp']; // Return the profile picture path directly
             } else {
                 // Return a default profile picture if none is found
-                return '../img/default imgs/cat_bento_1.jpg'; // Replace this with the path to your default profile picture
+                return '../img/default imgs/cat_bento.png'; // Replace this with the path to your default profile picture
             }
         } catch (PDOException $e) {
             // Handle the exception (e.g., log the error, redirect, etc.)
@@ -110,7 +110,7 @@ class ProfileInfo extends Database
     protected function getUserCategories($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT name FROM categories WHERE user_id = ?');
+            $stmt = $this->connection()->prepare('SELECT category_id, name FROM categories WHERE user_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -127,7 +127,7 @@ class ProfileInfo extends Database
     protected function getUserTopics($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT title, topic_content FROM topics WHERE topic_starter_id = ?');
+            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content FROM topics WHERE topic_starter_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -143,8 +143,60 @@ class ProfileInfo extends Database
     protected function getUserPosts($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT title, content FROM posts WHERE author_id = ?');
+            $stmt = $this->connection()->prepare('SELECT post_id, title, content FROM posts WHERE author_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $posts;
+        } catch (PDOException $e) {
+            // Handle the exception
+            // For simplicity, redirect to index.php in case of error
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+    public function getUserCategoriesId($user_id, $category_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT category_id, name FROM categories WHERE user_id = ? AND category_id =?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->bindValue(2, $category_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $categories;
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+
+    public function getUserTopicsId($user_id, $topic_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content FROM topics WHERE topic_starter_id = ? AND topic_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->bindValue(2, $topic_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $topics;
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            //header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+    public function getUserPostsId($user_id, $post_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT post_id, title, content FROM posts WHERE author_id = ? AND post_id = ?');
+            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
+            $stmt->bindValue(2, $post_id, PDO::PARAM_INT);
             $stmt->execute();
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $posts;

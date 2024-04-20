@@ -1,6 +1,7 @@
 <?php
 // Check authentication here
 // If the user is not authenticated, redirect them to the login page
+require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
 // Fetch latest posts
@@ -117,7 +118,14 @@ include('header.adm.php');
         </div>
 
     </div>
-
+    <div class="row mb-4">
+        <div class="col-md-12">
+            <div class="text-left mb-4">
+                <h2>Quick Actions</h2>
+                <a href="add_user.adm.php" class="btn btn-primary btn-lg">Add User</a>
+            </div>
+        </div>
+    </div>
     <!-- Important Notifications or Alerts -->
     <div class="row mb-4">
         <div class="col-md-12">

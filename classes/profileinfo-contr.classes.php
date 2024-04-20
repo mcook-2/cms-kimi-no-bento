@@ -16,9 +16,11 @@ class ProfileInfoContr extends ProfileInfo
     {
         $profileAbout = "Introduce your self here! whatever floats your boat";
         $profileTitle = "Hi! I am " . $this->username;
+        $default_pfp = '../img/default_imgs/cat_bento.png';
 
         $profileText = "Welcome to my corner of the web. Take a look around and make yourself comfortable.";
         $this->setProfileInfo($profileAbout, $profileTitle, $profileText, $this->user_id);
+        $this->updateProfilePfp($default_pfp, $this->user_id);
     }
 
     public function updateProfileInfo($about, $introTitle, $introText)

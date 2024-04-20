@@ -1,6 +1,7 @@
 <?php
 // Check authentication here
 // If the user is not authenticated, redirect them to the login page
+require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
 // Check if sorting criteria is set
@@ -111,6 +112,7 @@ include('header.adm.php');
                 <th class="col-1 <?= $orderBy == 'title' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Title</th>
                 <th class="col">Topic Content</th>
                 <th class="col-1 <?= $orderBy == 'date_created' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Date Created</th>
+                <th class="col-1">Actions</th>
             </tr>
         </thead>
         <tbody>
@@ -122,6 +124,15 @@ include('header.adm.php');
                     <td class="col-1"><?= highlightSearchTerm($topic['title'], $searchTerm)  ?></td>
                     <td class="col"><?= highlightSearchTerm($topic['topic_content'], $searchTerm)  ?></td>
                     <td class="col-1"><?= $topic['date_created'] ?></td>
+                    <td class="col-1">
+                        <a href="edit_topics.adm.php?topic_id=<?= $topic['topic_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                        <form action="delete.adm.php" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="entity" value="topic">
+                            <input type="hidden" name="id" value="<?= $topic['topic_id'] ?>">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this topic?')">Delete</button>
+                        </form>
+
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

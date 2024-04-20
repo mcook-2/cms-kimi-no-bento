@@ -27,7 +27,6 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             <label for="existing_category">Select Existing Category:</label>
             <select id="category" class="form-control" name="existing_category_id">
                 <option value="">Select Category</option>
-                <!-- Fetch and display existing categories from the database -->
                 <?php foreach ($categories as $category) : ?>
                     <option value="<?= $category['category_id'] ?>"><?= $category['name'] ?></option>
                 <?php endforeach; ?>
@@ -44,7 +43,7 @@ $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
 <script>
     tinymce.init({
-        selector: 'textarea', // change this value according to your HTML
+        selector: 'textarea',
         menubar: 'file edit view'
     });
 </script>

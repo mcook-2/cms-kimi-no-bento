@@ -9,56 +9,43 @@ include('../classes/profileinfo.classes.php');
 include('../classes/profileinfo-contr.classes.php');
 include('../classes/profileinfo-view.classes.php');
 
-
 $profileInfo = new ProfileInfoView();
 
-
-// need to display html chars
 ?>
-
-
-
-
 <div class="container-md">
     <div class="row ">
         <div class="col-md-4">
             <div class="card">
                 <div class="card-header">
-
                     <div class="profile-info-img">
                         <?php
                         // Check if the user has already uploaded a profile picture
                         $profilePicture = $profileInfo->fetchProfilePicture($_SESSION["user_id"]);
-                        if (!empty($profilePicture)) {
-                            echo '<img src="' . $profilePicture . '" class="card-img-top" alt="Profile Picture">';
-                        } else {
-                            echo '<img src="..\img\default imgs\cat_bento_1.jpg" class="card-img-top" alt="Profile Picture">';
-                        }
+                        if (!empty($profilePicture)) :
                         ?>
+                            <img src="<?= $profilePicture ?>" class="card-img-top" alt="Profile Picture">
+                        <?php else : ?>
+                            <img src="..\img\default imgs\cat_bento.png" class="card-img-top" alt="Profile Picture">
+                        <?php endif; ?>
                         <a href="profile_settings.php" class="btn btn-primary">Profile Settings</a>
-                        <!-- Add a button to upload a new profile picture -->
+                        <!-- upload a new profile picture button  -->
                         <form action="../backend/profile_upload_pfp.php" method="post" enctype="multipart/form-data" id="profilePictureForm">
                             <input type="file" name="profilePicture" accept="image/*">
                             <button type="submit" class="btn btn-primary">Upload New PFP</button>
                         </form>
                         <form action="../backend/profile_delete_pfp.inc.php" method="post" id="deleteProfilePictureForm">
                             <input type="hidden" name="deleteProfile" id="deleteProfile" value="delete_pfp">
-                            <!-- "Delete" button -->
+                            <!-- Delete profile picture button -->
                             <button type="submit" class="btn btn-danger" id="deleteProfilePicture">Delete</button>
                         </form>
-                        <!-- Add a button to delete the existing profile picture -->
-
                     </div>
-
-
                 </div>
-
                 <div class="card-body">
                     <h4 class="card-title"> <?php echo $_SESSION["username"]; ?>
                     </h4>
                     <h6>BIO</h6>
                     <p class="card-text">
-                        <?php $profileInfo->fetchAbout($_SESSION["user_id"]); ?>
+                        <?php echo htmlspecialchars_decode($profileInfo->fetchAbout($_SESSION["user_id"])); ?>
                     </p>
                 </div>
             </div>
@@ -67,14 +54,14 @@ $profileInfo = new ProfileInfoView();
             <div class="card">
                 <div class="card-header">
                     <p>
-                        <?php $profileInfo->fetchTitle($_SESSION["user_id"]); ?>
+                        <?php echo htmlspecialchars_decode($profileInfo->fetchTitle($_SESSION["user_id"])); ?>
                     </p>
                 </div>
                 <div class="card-body">
                     <div class="form-group">
-                        <label for="username"></label>
+                        <label></label>
                         <p class="form-control-static">
-                            <?php $profileInfo->fetchText($_SESSION["user_id"]); ?>
+                            <?php echo htmlspecialchars_decode($profileInfo->fetchText($_SESSION["user_id"])); ?>
                         </p>
                     </div>
                 </div>
@@ -86,11 +73,21 @@ $profileInfo = new ProfileInfoView();
                     <div class="card-body">
                         <?php
                         // Call the fetchPosts function to get the last 5 most recent posts
-                        $profileInfo->fetchPosts($_SESSION["user_id"]);
-
-                        // Display the last 5 most recent posts
-
+                        $posts = $profileInfo->fetchPosts($_SESSION["user_id"]);
+                        $postCount = 0;
+                        foreach ($posts as $post) :
+                            if ($postCount < 5) : // Limit the loop to the top 5 posts
                         ?>
+                                <h2><?php echo strip_tags(htmlspecialchars_decode($post["title"])); ?></h2>
+                                <p><?php echo strip_tags(htmlspecialchars_decode($post["content"])); ?></p>
+                        <?php
+                                $postCount++;
+                            else :
+                                break;
+                            endif;
+                        endforeach;
+                        ?>
+
                     </div>
                 </div>
                 <!-- End Center Section -->

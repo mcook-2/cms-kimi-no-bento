@@ -13,7 +13,7 @@ if (!isLoggedIn()) {
 
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate form data
+
     $sanitizedData = FormSanitizer::sanitize($_POST);
 
     $validator = new FormValidator($sanitizedData);
@@ -21,14 +21,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate form data
     $errors = $validator->validate();
 
-    // Output $_POST data
-
-    // Stop execution to see the data
-
-
     if (empty($errors)) {
-        // Sanitize form data
-
 
         // Insert reply into the database
         echo "Form data validation successful. Inserting reply into the database...<br>";
@@ -38,8 +31,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $reply_title = $sanitizedData["reply_title"];
         $reply_content  = $sanitizedData["reply_content"];
 
-
-        // Assuming you have stored user ID in the session after login
         $author_id = $_SESSION['user_id'];
 
         $stmt = $db->prepare("INSERT INTO posts (topic_id, author_id, title, content) VALUES (:topic_id, :author_id, :title, :content)");
@@ -59,7 +50,8 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         $_SESSION['errors'] = $errors;
         $_SESSION['submitted_data'] = $_POST; // Store submitted data in session
-
+        header("Location: ../show_topic.php?topic_id=$topic_id");
+        exit();
     }
 }
 header("Location: ../index.php");

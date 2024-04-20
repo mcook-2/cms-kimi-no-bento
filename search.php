@@ -9,7 +9,6 @@ $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page'])
 // Get the current page number, default to 1 if not set
 $page = isset($_GET['page']) ? $_GET['page'] : 1;
 
-// Initialize the search term variable
 
 $searchTerm = !empty($_GET['query']) ? $_GET['query'] : '';
 // Check if the search query is not empty
@@ -17,8 +16,12 @@ if (!empty($_GET['query'])) {
     $searchTerm = $_GET['query'];
 }
 
+$selectedCategory = !empty($_GET['category']) ? $_GET['category'] : $searchTerm;
 
-// Prepare the SQL query for posts with pagination
+$stmt = $db->prepare("SELECT name FROM categories");
+$stmt->execute();
+$categories = $stmt->fetchAll(PDO::FETCH_COLUMN);
+
 $stmtPosts = $db->prepare("
     SELECT 
         posts.post_id AS post_id,
@@ -43,25 +46,18 @@ $stmtPosts = $db->prepare("
     WHERE 
         users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm 
+        OR categories.name LIKE :searchTerm
+        OR categories.name LIKE :setCategory 
         OR posts.content LIKE :searchTerm
         OR posts.title LIKE :searchTerm
     ORDER BY posts.date_created DESC
 ");
-
-// Bind search term parameter for posts
 $stmtPosts->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-// Bind pagination parameters
-
-// Execute the statement for posts
+$stmtPosts->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
 $stmtPosts->execute();
-
-// Fetch all rows for posts from the result set
 $posts = $stmtPosts->fetchAll(PDO::FETCH_ASSOC);
 
-
-
-// Prepare the SQL query for posts with pagination
+//SQL query for posts pagination
 $pgPosts = $db->prepare("
     SELECT 
         posts.post_id AS post_id,
@@ -86,24 +82,16 @@ $pgPosts = $db->prepare("
     WHERE 
         users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm 
+        OR categories.name LIKE :searchTerm
+        OR categories.name LIKE :setCategory  
         OR posts.content LIKE :searchTerm
         OR posts.title LIKE :searchTerm
 ");
-
-// Bind search term parameter for posts
 $pgPosts->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
+$pgPosts->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
 $pgPosts->execute();
-
 $totalPosts = $pgPosts->fetchAll(PDO::FETCH_ASSOC);
 
-
-// Count total number of results after fetching the data
-// $totalPostResults = $pgPosts->rowCount();
-// var_dump($totalPostResults);
-
-
-// Prepare the SQL query for topics with pagination
 $stmtTopics = $db->prepare("
     SELECT 
         topics.topic_id AS topic_id,
@@ -125,17 +113,14 @@ $stmtTopics = $db->prepare("
     WHERE 
         users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm 
+        OR categories.name LIKE :searchTerm
+        OR categories.name LIKE :setCategory  
         OR topics.topic_content LIKE :searchTerm
     ORDER BY topics.date_created DESC
 ");
-// Bind search term parameter for topics
 $stmtTopics->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-
-// Execute the statement for topics
+$stmtTopics->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
 $stmtTopics->execute();
-
-// Fetch all rows for topics from the result set
 $topics = $stmtTopics->fetchAll(PDO::FETCH_ASSOC);
 
 $pgTopics = $db->prepare("
@@ -159,28 +144,21 @@ $pgTopics = $db->prepare("
     WHERE 
         users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm 
+        OR categories.name LIKE :searchTerm
+        OR categories.name LIKE :setCategory  
         OR topics.topic_content LIKE :searchTerm
     ORDER BY topics.date_created DESC
 ");
-// Bind search term parameter for topics
 $pgTopics->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-
-// Execute the statement for topics
+$pgTopics->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
 $pgTopics->execute();
-
-// Fetch all rows for topics from the result set
 $totalTopics = $pgTopics->fetchAll(PDO::FETCH_ASSOC);
-// $totalTopicResults = $pgPosts->rowCount();
-//var_dump($totalTopicResults);
 
 // Merge the arrays of total posts and total topics
 $pagetotals = array_merge($totalPosts, $totalTopics);
 
 // Calculate the total number of results
 $totalResults = count($pagetotals);
-
-//var_dump($totalResults);
 
 // Merge posts and topics into one array
 $results = array_merge($posts, $topics);
@@ -206,6 +184,7 @@ for ($i = 1; $i <= $totalPages; $i++) {
     $link = 'search.php?';
 
     $link .= 'query=' . urlencode($searchTerm) . '&';
+    $link .= 'category=' . urlencode($selectedCategory) . '&';
 
     $link .= 'page=' . $i;
     if ($itemsPerPage) {
@@ -216,93 +195,94 @@ for ($i = 1; $i <= $totalPages; $i++) {
 }
 
 
-?>
-
-
-
-<?php
 $startIndex = ($page - 1) * $itemsPerPage;
-for ($i = 0; $startIndex + $i < count($results) && $i < $itemsPerPage; $i++) {
-    $result = $results[$startIndex + $i];
-    // Your code to display each item goes here
-    if (isset($result['post_id'])) : ?>
-        <!-- Display post -->
-        <div id="post_<?php echo $result['post_id']; ?>" class="searchitem-community-post row">
-            <div class="col-auto">
-                <div class="user-icon-bordered rounded-circle">
-                    <img src="<?php echo $result['post_author_pfp']; ?>" alt="<?php echo $result['post_author']; ?>" class="rounded-circle" width="50" height="50">
-                </div>
-            </div>
-            <div class="col">
-                <div class="searchitem-text">
-                    <h4 class="searchitem-title">
-                        <span><?php echo $result['post_author']; ?></span>
-                        <?php
-                        echo "commented in";
-                        $url = "show_topic.php?topic_id=" . $result['topic_id'];
-                        $postNum = "#" . $result['post_id'];
-                        $title =  $result['topic_title']; // Concatenating post and topic titles
-                        ?>
-                        <a href="<?php echo $url; ?>" title="<?php echo $title; ?>"><?php echo $title; ?></a>
-                    </h4>
-
-                    <div class="searchitem-title text-content">Title: <a href="<?php echo $url . $postNum ?>" title="<?php echo $result['post_title']; ?>"><?php echo $result['post_title']; ?></a> </div>
-                    <div class="searchitem-body text-content"><?php echo $result['post_content']; ?></div>
-                    <div class=" searchitem-meta"><?php echo $result['post_date_created']; ?> in <a href="#"><?php echo $result['category_name']; ?></a></div>
-                </div>
-            </div>
-        </div>
-    <?php elseif (isset($result['topic_id'])) : ?>
-        <!-- Display topic -->
-        <div id="topic_<?php echo $result['topic_id']; ?>" class="searchitem-community-post row">
-            <div class="col-auto">
-                <div class="user-icon-bordered rounded-circle">
-                    <img src="<?php echo $result['topic_starter_pfp']; ?>" alt="<?php echo $result['topic_starter']; ?>" class="rounded-circle" width="50" height="50">
-                </div>
-            </div>
-            <div class="col">
-                <div class="searchitem-text">
-                    <h4 class="searchitem-title">
-                        <span><?php echo $result['topic_starter']; ?></span>
-                        <?php
-                        echo "created ";
-                        $url = "show_topic.php?topic_id=" . $result['topic_id'];
-                        $title = $result['topic_title'];
-                        ?>
-                        <a href="<?php echo $url; ?>" title="<?php echo $title; ?>"><?php echo $title; ?></a>
-                    </h4>
-                    <div class="searchitem-body text-content"><?php echo $result['topic_content']; ?></div>
-                    <div class="searchitem-meta"><?php echo $result['topic_date_created']; ?> in <a href="#"><?php echo $result['category_name']; ?></a></div>
-                </div>
-            </div>
-        </div>
-    <?php endif; ?>
-<?php }
-
 ?>
 
-<!-- Display pagination links -->
-<nav aria-label="Page navigation">
-    <ul class="pagination">
-        <?= $paginationLinks ?>
 
-    </ul>
-    <div class="mb-2">
-        <!-- Display total number of results -->
-        <span>Total Results: <?= $totalResults ?></span>
-        <!-- Form with links for choosing items per page -->
-        <form method="GET" class="d-inline ml-3">
-            <span class="mr-2 <?= $itemsPerPage == 1 ? 'selected' : '' ?>"><a href="?items_per_page=1">1</a></span>
-            <span class="mr-2 <?= $itemsPerPage == 5 ? 'selected' : '' ?>"><a href="?items_per_page=5">5</a></span>
-            <span class="mr-2 <?= $itemsPerPage == 10 ? 'selected' : '' ?>"><a href="?items_per_page=10">10</a></span>
-            <span class="mr-2 <?= $itemsPerPage == 20 ? 'selected' : '' ?>"><a href="?items_per_page=20">20</a></span>
-            <span class="<?= $itemsPerPage == 50 ? 'selected' : '' ?>"><a href="?items_per_page=50">50</a></span>
-        </form>
+
+<div class="container"> <!-- Breadcrumb navigation -->
+    <nav aria-label="breadcrumb">
+        <ol class="breadcrumb">
+            <li class="breadcrumb-item"><a href="index.php">Home</a></li>
+            <li class="breadcrumb-item active" aria-current="page">Search Results for "<?php echo htmlspecialchars($searchTerm); ?>"</li>
+        </ol>
+    </nav>
+
+    <!-- Dropdown for selecting category -->
+    <form action="search.php" method="get">
+        <div class="form-group">
+            <input type="text" class="form-control" name="query" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
+            <div class="input-group-append">
+                <button class="btn btn-outline-secondary" type="submit" id="search-btn2">Search</button>
+            </div>
+            <label for="categorySelect">Select Category:</label>
+            <select id="categorySelect" class="form-control" name="category">
+                <option value="">All Categories</option>
+                <?php foreach ($categories as $category) : ?>
+                    <option value="<?php echo $category; ?>"><?php echo $category; ?></option>
+                <?php endforeach; ?>
+            </select>
+        </div>
+    </form>
+    <div class="row border-0">
+        <div class=" col border-0">
+            <table class="table ">
+                <tbody>
+                    <?php for ($i = 0; $startIndex + $i < count($results) && $i < $itemsPerPage; $i++) :
+                        $result = $results[$startIndex + $i];
+                        $isPost = isset($result['post_id']);
+                        $id = $isPost ? 'post_' . $result['post_id'] : 'topic_' . $result['topic_id'];
+                    ?>
+                        <tr id="<?php echo $id; ?>" class="searchitem-community-post ">
+                            <td>
+                                <div class="row border-0 bg-light">
+                                    <div class="col-auto border-0 ">
+                                        <div class="user-icon-bordered rounded-circle">
+                                            <img src="<?php echo $isPost ? $result['post_author_pfp'] : $result['topic_starter_pfp']; ?>" alt="<?php echo $isPost ? $result['post_author'] : $result['topic_starter']; ?>" class="rounded-circle" width="50" height="50">
+                                        </div>
+                                    </div>
+                                    <div class="col border-0">
+                                        <h4 class="searchitem-title">
+                                            <span><?php echo $isPost ? $result['post_author'] : $result['topic_starter']; ?></span>
+                                            <?php echo $isPost ? 'commented in' : 'created'; ?>
+                                            <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>" title="<?php echo $result['topic_title']; ?>"><?php echo $result['topic_title']; ?></a>
+                                        </h4>
+                                        <div class="searchitem-body text-content">
+                                            <?php if ($isPost) : ?>
+                                                Title: <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>#<?php echo $result['post_id']; ?>" title="<?php echo $result['post_title']; ?>"><?php echo $result['post_title']; ?></a>
+                                                <br>
+                                            <?php endif; ?>
+                                            <?php echo $isPost ? strip_tags(htmlspecialchars_decode($result['post_content'])) : strip_tags(htmlspecialchars_decode($result['topic_content'])); ?>
+                                        </div>
+                                        <div class="searchitem-meta">
+                                            <?php echo $isPost ? $result['post_date_created'] : $result['topic_date_created']; ?> in <a href="#"><?php echo $result['category_name']; ?></a>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    <?php endfor; ?>
+                </tbody>
+            </table>
+        </div>
     </div>
-
-</nav>
-
-<?php
-
-?>
+    <!-- Display pagination links -->
+    <nav aria-label="Page navigation">
+        <ul class="pagination">
+            <?= $paginationLinks ?>
+        </ul>
+        <div class="mb-2">
+            <!-- Display total number of results -->
+            <span>Total Results: <?= $totalResults ?></span>
+            <!-- Form with links for choosing items per page -->
+            <form method="GET" class="d-inline ml-3">
+                <span class="mr-2 <?= $itemsPerPage == 1 ? 'selected' : '' ?>"><a href="?items_per_page=1">1</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 5 ? 'selected' : '' ?>"><a href="?items_per_page=5">5</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 10 ? 'selected' : '' ?>"><a href="?items_per_page=10">10</a></span>
+                <span class="mr-2 <?= $itemsPerPage == 20 ? 'selected' : '' ?>"><a href="?items_per_page=20">20</a></span>
+                <span class="<?= $itemsPerPage == 50 ? 'selected' : '' ?>"><a href="?items_per_page=50">50</a></span>
+            </form>
+        </div>
+    </nav>
+</div>
 <?php include('inc/footer.inc.php'); ?>

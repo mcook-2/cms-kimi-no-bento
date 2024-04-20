@@ -1,6 +1,7 @@
 <?php
 // Check authentication here
 // If the user is not authenticated, redirect them to the login page
+require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
 $orderBy = isset($_GET['order_by']) ? $_GET['order_by'] : 'category_id';
@@ -101,6 +102,7 @@ include('header.adm.php');
                 <th class="col-1 <?= $orderBy == 'name' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Category Name</th>
                 <th class="col-1 <?= $orderBy == 'username' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Username</th>
                 <th class="col-1 <?= $orderBy == 'date_created' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Date Created</th>
+                <th></th>
             </tr>
         </thead>
         <tbody>
@@ -110,6 +112,13 @@ include('header.adm.php');
                     <td class="col-1"><?= highlightSearchTerm($category['name'], $searchTerm) ?></td>
                     <td class="col-1"><?= highlightSearchTerm($category['username'], $searchTerm) ?></td>
                     <td class="col-1"><?= $category['date_created'] ?></td>
+                    <td class="col-1"><a href="edit_categories.adm.php?category_id=<?= $category['category_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
+                        <form action="delete.adm.php" method="POST" style="display: inline-block;">
+                            <input type="hidden" name="entity" value="category">
+                            <input type="hidden" name="id" value="<?= $category['category_id'] ?>">
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this category?')">Delete</button>
+                        </form>
+                    </td>
                 </tr>
             <?php endforeach; ?>
         </tbody>

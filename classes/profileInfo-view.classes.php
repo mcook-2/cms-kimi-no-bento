@@ -8,50 +8,42 @@ class ProfileInfoView extends ProfileInfo
     {
         $profileInfo = $this->getProfileInfo($user_id);
 
-        echo $profileInfo[0]["profiles_about"];
+        return $profileInfo[0]["profiles_about"];
     }
 
     public function fetchTitle($user_id)
     {
         $profileInfo = $this->getProfileInfo($user_id);
 
-        echo $profileInfo[0]["profiles_introtitle"];
+        return $profileInfo[0]["profiles_introtitle"];
     }
 
     public function fetchText($user_id)
     {
         $profileInfo = $this->getProfileInfo($user_id);
 
-        echo $profileInfo[0]["profiles_introtext"];
+        return $profileInfo[0]["profiles_introtext"];
     }
 
     public function fetchCategories($user_id)
     {
         $categories = $this->getUserCategories($user_id);
 
-        foreach ($categories as $category) {
-            echo $category["name"];
-        }
+        return $categories;
     }
 
     public function fetchTopics($user_id)
     {
         $topics = $this->getUserTopics($user_id);
 
-        foreach ($topics as $topic) {
-            echo $topic["title"];
-            echo $topic["topic_content"];
-        }
+        return $topics;
     }
 
     public function fetchPosts($user_id)
     {
         $posts = $this->getUserPosts($user_id);
 
-        foreach ($posts as $post) {
-            echo $post["title"];
-            echo $post["content"];
-        }
+        return $posts;
     }
 
     public function fetchProfilePicture($user_id)

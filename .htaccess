@@ -1,2 +1,5 @@
 RewriteEngine On
-RewriteRule ^post/([^/]+)$ post.php?id=$1 [L]
+RewriteBase /wd2/Project/cms-kimi-no-bento
+
+
+RewriteRule ^search/([^/]+)/([^/]+)/page/([^/]+)/items_per_page/([^/]+)$ search.php?query=$1&category=$2&page=$3&items_per_page=$4 [L]
