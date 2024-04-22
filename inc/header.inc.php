@@ -1,8 +1,13 @@
 <?php
-define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/');
-define('CSS_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/CSS/');
-define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/IMG/');
-define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
+define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/');
+define('CSS_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/CSS/');
+define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/IMG/');
+define('TINYMCE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
+
+
+// config.php
+// Define other configuration variables here
+
 
 
 function logout()
