@@ -1,8 +1,8 @@
 <?php
-define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/');
-define('CSS_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/CSS/');
-define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/IMG/');
-define('TINYMCE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
+define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST']);
+define('CSS_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/CSS/');
+define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/IMG/');
+define('TINYMCE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/lib/tinymce/js/tinymce/');
 
 
 // config.php
