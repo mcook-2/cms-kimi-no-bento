@@ -1,7 +1,7 @@
 <?php
 define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST']);
 define('CSS_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/CSS/');
-define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/IMG/');
+define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/img/');
 define('TINYMCE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/lib/tinymce/js/tinymce/');
 
 
@@ -36,8 +36,7 @@ if (isset($_POST['logout'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS</title>
-    <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap-grid.min.css" />
-    <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap.min.css" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.6.2/dist/css/bootstrap.min.css" integrity="sha384-xOolHFLEh07PJGoPkLv1IbcEPTNtaed2xpHsD9ESMhqIYd0nLMwNLD69Npy4HI+N" crossorigin="anonymous">
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>styles.css" />
     <script src="<?php echo TINYMCE_URL; ?>tinymce.min.js"></script>
 </head>
