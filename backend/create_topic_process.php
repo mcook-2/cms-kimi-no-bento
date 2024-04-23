@@ -15,58 +15,50 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate form data
     $errors = $validator->validate();
 
+
+
     if (empty($errors)) {
-        $title = $sanitizedData["topic_title"];
-        $topic_content = $sanitizedData["topic_content"];
-        $category_type = $sanitizedData["category_type"];
-        $new_category_name = $sanitizedData["new_category_name"];
-        $existing_category_id = $sanitizedData["existing_category_id"];
-        $topic_starter_id = $_SESSION['user_id'];
-
-        // Handle new category insertion
-        if ($category_type === "new") {
-            $stmt = $db->prepare("INSERT INTO categories (name, user_id) VALUES (:new_category_name, :user_id)");
-            $stmt->bindParam(':new_category_name', $new_category_name, PDO::PARAM_STR);
-            $stmt->bindParam(':user_id', $topic_starter_id, PDO::PARAM_INT);
-            $stmt->execute();
-
-            // Get the newly inserted category ID
-            $category_id = $db->lastInsertId();
-        } else { // Existing category
-            $category_id = $existing_category_id;
-        }
-
-        // Check if the category ID exists
-        $stmt = $db->prepare("SELECT COUNT(*) FROM categories WHERE category_id = :category_id");
-        $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+        // Get the category ID based on the category name submitted
+        $categoryName = $sanitizedData['category_name'];
+        $stmt = $db->prepare("SELECT category_id FROM categories WHERE name = :category_name");
+        $stmt->bindParam(':category_name', $categoryName);
         $stmt->execute();
-        $count = $stmt->fetchColumn();
+        $category = $stmt->fetch(PDO::FETCH_ASSOC);
 
-        if ($count > 0) {
-            // Insert the topic into the database
+
+
+        if ($category) {
+            // Category exists, proceed with inserting the topic
+            $categoryId = $category['category_id'];
+            $title = $sanitizedData['topic_title'];
+            $content = $sanitizedData['topic_content'];
+            $topicStarterId = $_SESSION['user_id'];
+
             $stmt = $db->prepare("INSERT INTO topics (category_id, title, topic_content, topic_starter_id) VALUES (:category_id, :title, :topic_content, :topic_starter_id)");
-            $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
-            $stmt->bindParam(':title', $title, PDO::PARAM_STR);
-            $stmt->bindParam(':topic_content', $topic_content, PDO::PARAM_STR);
-            $stmt->bindParam(':topic_starter_id', $topic_starter_id, PDO::PARAM_INT);
+            $stmt->bindParam(':category_id', $categoryId);
+            $stmt->bindParam(':title', $title);
+            $stmt->bindParam(':topic_content', $content);
+            $stmt->bindParam(':topic_starter_id', $topicStarterId);
             $stmt->execute();
+            $topicId = $db->lastInsertId();
 
-            $topic_id = $db->lastInsertId();
-
-            // Redirect user to the topic page after successfully submitting the post
-            echo "Topic inserted into the database successfully. Redirecting to the topic page...<br>";
-            unset($_SESSION['submitted_data']);
-            header("Location: ../show_topic.php?topic_id=$topic_id");
+            // Redirect to index page after successful insertion
+            header("Location: ../show_topic.php?topic_id=$topicId");
             exit();
         } else {
+            // Category does not exist
             echo "Category does not exist.";
         }
     } else {
+        // Form errors, redirect back to create topic page
         echo "Form not submitted.<br>";
         $_SESSION['errors'] = $errors;
         $_SESSION['submitted_data'] = $_POST; // Store submitted data in session
+        header("Location: ../create_topic.php?error");
+        exit();
     }
 }
 
+// If form is not submitted, redirect to index page
 header("Location: ../index.php");
 exit();

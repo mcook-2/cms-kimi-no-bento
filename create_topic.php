@@ -6,36 +6,52 @@ include('inc/header.inc.php');
 // Fetch categories from the database
 $stmt = $db->query("SELECT * FROM categories");
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
+var_dump($_SESSION);
+$contentValue = $titleValue  = '';
+// Check if there are any errors stored in the session
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']); // Remove errors from session to prevent displaying them again on refresh
+
+    // Retrieve submitted data to fill inputs
+    if (isset($_SESSION['submitted_data'])) {
+        $submittedData = $_SESSION['submitted_data'];
+        $titleValue = isset($submittedData['topic_title']) ? htmlspecialchars($submittedData['topic_title']) : '';
+        $contentValue = isset($submittedData['topic_content']) ? htmlspecialchars($submittedData['topic_content']) : '';
+        unset($_SESSION['submitted_data']);
+    }
+}
 ?>
 
 <!-- Form to create a new topic -->
 <div class="container">
     <h3>Create New Topic</h3>
+    <?php if (!empty($errors)) : ?>
+        <div class="alert alert-danger">
+            <ul>
+                <?php foreach ($errors as $error) : ?>
+                    <li><?php echo $error; ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
     <form action="backend/create_topic_process.php" method="post">
         <div class="form-group">
             <label for="topic_title">Title:</label>
-            <input type="text" class="form-control" id="topic_title" name="topic_title">
+            <input type="text" class="form-control" id="topic_title" name="topic_title" value="<?= $titleValue ?>">
         </div>
         <!-- Textarea for topic content -->
         <div class="form-group">
             <label for="topic_content">Content:</label>
-            <textarea class="form-control" id="topic_content" name="topic_content" rows="6"></textarea>
+            <textarea class="form-control" id="topic_content" name="topic_content" rows="6"><?= $contentValue ?></textarea>
         </div>
         <div class="form-group">
-
-            <input class="form-check-input" type="radio" name="category_type" id="existing_category" value="existing" checked>
-            <label for="existing_category">Select Existing Category:</label>
-            <select id="category" class="form-control" name="existing_category_id">
-                <option value="">Select Category</option>
+            <label for="existing_category">Select Category:</label>
+            <select id="category" class="form-control" name="category_name">
                 <?php foreach ($categories as $category) : ?>
-                    <option value="<?= $category['category_id'] ?>"><?= $category['name'] ?></option>
+                    <option><?= $category['name'] ?></option>
                 <?php endforeach; ?>
             </select>
-        </div>
-        <div class="form-group">
-            <input class="form-check-input" type="radio" name="category_type" id="new_category" value="new">
-            <label for="new_category">Create New Category:</label>
-            <input type="text" class="form-control" id="new_category_input" name="new_category_name">
         </div>
         <button type="submit" class="btn btn-primary">Create Topic</button>
     </form>

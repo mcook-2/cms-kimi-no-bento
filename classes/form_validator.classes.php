@@ -25,6 +25,8 @@ class FormValidator
                 }
             }
 
+            // *** for login and register ***
+
             if (isset($this->data['email'])) {
                 try {
                     $this->validateEmailFormat();
@@ -57,17 +59,62 @@ class FormValidator
                 }
             }
 
+            // *** for post comment *** 
+
             if (isset($this->data['reply_title'])) {
                 try {
                     $this->validateReplyTitle();
+                } catch (Exception $e) {
+                    $this->errors['reply_title'] = $e->getMessage();
+                }
+            }
+
+            if (isset($this->data['reply_content'])) {
+                try {
+                    $this->validateReplyContent();
+                } catch (Exception $e) {
+                    $this->errors['reply_content'] = $e->getMessage();
+                }
+            }
+
+            // *** for create topic ***
+            if (isset($this->data['topic_title'])) {
+                try {
+                    $this->validateTopicTitle();
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
             }
 
-            if (isset($this->data['reply_title'])) {
+            if (isset($this->data['topic_content'])) {
                 try {
-                    $this->validateReplyContent();
+                    $this->validateTopicContent();
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
+
+            if (isset($this->data['category_name'])) {
+                try {
+                    $this->validateCategory();
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
+
+            // *** for user update ***
+
+            if (isset($this->data['post_title'])) {
+                try {
+                    $this->validatePostTitle();
+                } catch (Exception $e) {
+                    $this->errors[] = $e->getMessage();
+                }
+            }
+
+            if (isset($this->data['post_content'])) {
+                try {
+                    $this->validatePostContent();
                 } catch (Exception $e) {
                     $this->errors[] = $e->getMessage();
                 }
@@ -145,19 +192,48 @@ class FormValidator
         }
     }
 
+    // *** for create topic *** 
+
+    private function validateTopicTitle()
+    {
+        // Check if title is provided
+        if (empty($this->data['topic_title'])) {
+            throw new Exception("Title is required");
+        }
+        // You can add more validation rules for the title if needed
+    }
+
+    private function validateTopicContent()
+    {
+        // Check if content is provided
+        if (empty($this->data['topic_content'])) {
+            throw new Exception("Content is required");
+        }
+        // You can add more validation rules for the content if needed
+    }
+
+    private function validateCategory()
+    {
+        // Check if a category is selected
+        if (empty($this->data['category_name'])) {
+            throw new Exception("Category is required");
+        }
+        // You can add more validation rules for the category if needed
+    }
 
 
-    // for post reply 
+
+    // *** for post reply ***  
 
     private function validateReplyTitle()
     {
         // Check if reply title is empty or too long
         $reply_title = $this->data['reply_title'];
         if (empty($reply_title)) {
-            throw new Exception("reply_title: Reply title is required");
+            throw new Exception(" Reply title is required");
         }
         if (strlen($reply_title) > 255) {
-            throw new Exception("reply_title: Reply title must be less than 255 characters");
+            throw new Exception(" Reply title must be less than 255 characters");
         }
     }
 
@@ -166,7 +242,28 @@ class FormValidator
         // Check if reply content is empty
         $reply_content = $this->data['reply_content'];
         if (empty($reply_content)) {
-            throw new Exception("reply_content: Reply content is required");
+            throw new Exception("Reply content is required");
         }
+    }
+
+
+    // *** for user update ***
+
+    private function validatePostTitle()
+    {
+        // Check if post title is provided
+        if (empty($this->data['post_title'])) {
+            throw new Exception("post_title: Post title is required");
+        }
+        // You can add more validation rules for the post title if needed
+    }
+
+    private function validatePostContent()
+    {
+        // Check if post content is provided
+        if (empty($this->data['post_content'])) {
+            throw new Exception("post_content: Post content is required");
+        }
+        // You can add more validation rules for the post content if needed
     }
 }

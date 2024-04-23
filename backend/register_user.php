@@ -2,6 +2,7 @@
 include('../inc/config.inc.php');
 include('../inc/database.inc.php');
 
+
 // Include the FormValidator and FormSanitizer classes
 include('../classes/form_validator.classes.php');
 include('../classes/form_sanitizer.classes.php');
@@ -26,6 +27,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $sanitizedData["email"];
         $password = $sanitizedData["password"];
         $confirm_password = $sanitizedData["confirm_password"];
+
+
+
+        // Hash the password with the salt
+        $hashed_password = password_hash($password, PASSWORD_DEFAULT);
 
         // Check if username or email already exists
         $stmt = $db->prepare("SELECT * FROM users WHERE username = :username OR email = :email");
@@ -52,10 +58,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         }
 
         // Insert sanitized data into the database
-        $stmt = $db->prepare("INSERT INTO users (username, email, password, role_id) VALUES (:username, :email, :password, '935')");
+        $stmt = $db->prepare("INSERT INTO users (username, email, password_hash, role_id) VALUES (:username, :email, :password, '935')");
         $stmt->bindParam(':username', $username);
         $stmt->bindParam(':email', $email);
-        $stmt->bindParam(':password', $password);
+        $stmt->bindParam(':password', $hashed_password);
         $stmt->execute();
 
         // Retrieve the last inserted ID

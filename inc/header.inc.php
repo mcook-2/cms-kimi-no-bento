@@ -1,7 +1,7 @@
 <?php
 define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/');
 define('CSS_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/CSS/');
-define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/IMG/');
+define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/img/');
 define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
 
 

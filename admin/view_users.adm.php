@@ -15,6 +15,10 @@ $orderDir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'ASC';
 // Check if search criteria is set
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
+if (isset($_GET['id'])) {
+    $userId = $_GET['id'];
+}
+
 // Define the number of items per page
 $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10;
 
@@ -29,9 +33,13 @@ $offset = ($page - 1) * $itemsPerPage;
 $stmt = $db->prepare("SELECT users.user_id, users.username, users.email, roles.role_name, users.date_created 
                     FROM users 
                     INNER JOIN roles ON users.role_id = roles.role_id
-                    WHERE users.username LIKE :searchTerm OR users.email LIKE :searchTerm
-                    ORDER BY $orderBy $orderDir
+                    WHERE users.username LIKE :searchTerm OR users.email LIKE :searchTerm 
+                    ORDER BY " . (isset($_GET['id']) ? "users.user_id = :userId DESC, " : "") . "$orderBy $orderDir
                     LIMIT :offset, :itemsPerPage");
+
+if (isset($_GET['id'])) {
+    $stmt->bindValue(':userId', $userId, PDO::PARAM_INT);
+}
 $stmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
@@ -120,18 +128,18 @@ function highlightSearchTerm($text, $searchTerm)
         <tbody>
             <?php foreach ($users as $user) : ?>
                 <tr>
-                    <th scope="row"><?= $user['user_id'] ?></th>
+                    <th><?= isset($userId) ? highlightSearchTerm($user['user_id'], $userId) : $user['user_id'] ?></th>
                     <td><?= highlightSearchTerm(htmlspecialchars($user['username']), $searchTerm) ?></td>
                     <td><?= highlightSearchTerm(htmlspecialchars($user['email']), $searchTerm) ?></td>
                     <td><?= highlightSearchTerm(htmlspecialchars($user['role_name']), $searchTerm) ?></td>
                     <td><?= htmlspecialchars($user['date_created']) ?></td>
                     <td>
-                        <a href="edit_user.adm.php?user_id=<?= $user['user_id'] ?>">Edit</a>
+                        <a href="edit_user.adm.php?user_id=<?= $user['user_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                         <!-- Form for deletion -->
                         <form action="delete.adm.php" method="POST" style="display: inline-block;">
                             <input type="hidden" name="entity" value="user">
                             <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
-                            <button type="submit" class="btn btn-link text-danger" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
+                            <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                         </form>
                     </td>
                 </tr>

@@ -10,6 +10,9 @@ $orderDir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'ASC';
 
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
+if (isset($_GET['id'])) {
+    $postId = $_GET['id'];
+}
 // Define the number of items per page
 $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10;
 
@@ -29,8 +32,13 @@ $stmt = $db->prepare("SELECT posts.post_id, posts.title, posts.content, posts.da
                     WHERE users.username LIKE :searchTerm OR topics.title LIKE :searchTerm
                         OR categories.name LIKE :searchTerm OR posts.content LIKE :searchTerm
                         OR posts.title LIKE :searchTerm
-                    ORDER BY $orderBy $orderDir
+                        ORDER BY " . (isset($_GET['id']) ? "posts.post_id = :postId DESC, " : "") . "$orderBy $orderDir
                     LIMIT :offset, :itemsPerPage");
+
+if (isset($_GET['id'])) {
+    $stmt->bindValue(':postId', $postId, PDO::PARAM_INT);
+}
+
 $stmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
@@ -124,7 +132,7 @@ include('header.adm.php');
         <tbody>
             <?php foreach ($posts as $post) : ?>
                 <tr>
-                    <th scope="row" class="col-1"><?= $post['post_id'] ?></th>
+                    <th class="col-1"><?= isset($postId) ? highlightSearchTerm($post['post_id'], $postId) : $post['post_id'] ?></th>
                     <td class="col-1"><?= highlightSearchTerm($post['Category Name'], $searchTerm) ?></td>
                     <td class="col-1"><?= highlightSearchTerm($post['Topic Name'], $searchTerm) ?></td>
                     <td class="col-1"><?= highlightSearchTerm($post['username'], $searchTerm) ?></td>

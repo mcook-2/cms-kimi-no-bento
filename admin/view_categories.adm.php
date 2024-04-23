@@ -9,6 +9,10 @@ $orderDir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'ASC';
 
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
 
+if (isset($_GET['id'])) {
+    $categoryId = $_GET['id'];
+}
+
 // Define the number of items per page
 $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10;
 
@@ -18,22 +22,24 @@ $page = isset($_GET['page']) ? $_GET['page'] : 1;
 // Calculate the offset
 $offset = ($page - 1) * $itemsPerPage;
 
-$stmt = $db->prepare("SELECT categories.*, users.username 
+$stmt = $db->prepare("SELECT categories.*
                     FROM categories 
-                    LEFT JOIN users ON categories.user_id = users.user_id
-                    WHERE users.username LIKE :searchTerm OR categories.name LIKE :searchTerm 
-                    ORDER BY $orderBy $orderDir
+                    WHERE  categories.name LIKE :searchTerm 
+                    ORDER BY " . (isset($_GET['id']) ? "categories.category_id = :categoryId DESC, " : "") . "$orderBy $orderDir
                     LIMIT :offset, :itemsPerPage");
+
+if (isset($_GET['id'])) {
+    $stmt->bindValue(':categoryId', $categoryId, PDO::PARAM_INT);
+}
 $stmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
-$pgStmt = $db->prepare("SELECT categories.*, users.username 
+$pgStmt = $db->prepare("SELECT categories.* 
                     FROM categories 
-                    LEFT JOIN users ON categories.user_id = users.user_id
-                    WHERE users.username LIKE :searchTerm OR categories.name LIKE :searchTerm 
+                    WHERE categories.name LIKE :searchTerm 
                     ORDER BY $orderBy $orderDir");
 $pgStmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $pgStmt->execute();
@@ -80,7 +86,6 @@ include('header.adm.php');
             <select name="order_by" id="order_by" class="form-control">
                 <option value="category_id" <?= $orderBy == 'category_id' ? 'selected' : '' ?>>Category id</option>
                 <option value="name" <?= $orderBy == 'name' ? 'selected' : '' ?>>Category Name</option>
-                <option value="username" <?= $orderBy == 'username' ? 'selected' : '' ?>>Username</option>
                 <option value="date_created" <?= $orderBy == 'date_created' ? 'selected' : '' ?>>Date Created</option>
             </select>
         </div>
@@ -94,13 +99,14 @@ include('header.adm.php');
         <input type="hidden" name="items_per_page" value="<?= $itemsPerPage ?>">
         <button type="submit" class="btn btn-primary">Sort</button>
     </form>
+    <div>
+        <a href="create_category.adm.php" class="btn btn-success mr-5 p-1 m-auto d-inline">Create new Category</a>
     </div>
     <table class="table table-bordered table-striped">
         <thead class="thead-dark">
             <tr>
                 <th class="col-1 <?= $orderBy == 'category_id' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Category id</th>
                 <th class="col-1 <?= $orderBy == 'name' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Category Name</th>
-                <th class="col-1 <?= $orderBy == 'username' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Username</th>
                 <th class="col-1 <?= $orderBy == 'date_created' ? ($orderDir == 'ASC' ? 'sorted-asc' : 'sorted-desc') : '' ?>">Date Created</th>
                 <th></th>
             </tr>
@@ -108,9 +114,8 @@ include('header.adm.php');
         <tbody>
             <?php foreach ($categories as $category) : ?>
                 <tr>
-                    <th scope="row" class="col-1"><?= $category['category_id'] ?></th>
+                    <th><?= isset($categoryId) ? highlightSearchTerm($category['category_id'], $categoryId) : $category['category_id'] ?></th>
                     <td class="col-1"><?= highlightSearchTerm($category['name'], $searchTerm) ?></td>
-                    <td class="col-1"><?= highlightSearchTerm($category['username'], $searchTerm) ?></td>
                     <td class="col-1"><?= $category['date_created'] ?></td>
                     <td class="col-1"><a href="edit_categories.adm.php?category_id=<?= $category['category_id'] ?>" class="btn btn-primary btn-sm">Edit</a>
                         <form action="delete.adm.php" method="POST" style="display: inline-block;">

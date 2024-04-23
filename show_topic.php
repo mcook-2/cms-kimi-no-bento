@@ -34,9 +34,22 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
     exit;
 }
 
+$titleValue = $contentValue = '';
+if (isset($_SESSION['errors'])) {
+    $errors = $_SESSION['errors'];
+    unset($_SESSION['errors']); // Remove errors from session to prevent displaying them again on refresh
+
+    // Retrieve submitted data to fill inputs
+    if (isset($_SESSION['submitted_data'])) {
+        $submittedData = $_SESSION['submitted_data'];
+        $titleValue = isset($submittedData['reply_title']) ? $submittedData['reply_title'] : '';
+        $contentValue = isset($submittedData['reply_content']) ? $submittedData['reply_content'] : '';
+        unset($_SESSION['submitted_data']);
+    }
+}
+
 
 ?>
-
 <div class="container">
 
     <nav aria-label="breadcrumb">
@@ -84,33 +97,32 @@ if (isset($_GET['topic_id']) && !empty($_GET['topic_id'])) {
                 <input type="hidden" name="topic_id" value="<?php echo $topic_id; ?>">
                 <div class="form-group">
                     <label for="reply_title">Reply Title</label>
-                    <input type="text" class="form-control" id="reply_title" name="reply_title">
+                    <input type="text" class="form-control" id="reply_title" name="reply_title" value="<?php echo htmlspecialchars($titleValue); ?>">
+
+                    <?php if (isset($errors['reply_title'])) : ?>
+                        <div class="text-danger"><?php echo $errors['reply_title']; ?></div>
+                    <?php endif; ?>
                 </div>
                 <div class="form-group">
                     <label for="reply_content">Your Reply</label>
-                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3"></textarea>
-                </div>
+                    <textarea class="form-control" id="reply_content" name="reply_content" rows="3"><?php echo htmlspecialchars($contentValue); ?></textarea>
 
-                <button type="submit" class="btn btn-primary">Post Reply</button>
-            </form>
-            <form action="#" method="POST">
-                <img src="inc/captcha.inc.php" alt="captcha" />
-                <br />
-                <br />
-                <input type="text" name="captcha" />
-                <?php if (isset($_POST['verify'])) : ?>
-                    <?php if (!empty($_POST['captcha'])) : ?>
-                        <?php if ($_SESSION['captcha'] == $_POST['captcha']) : ?>
-                            <label class='text-success'>Validated</label>
-                        <?php else : ?>
-                            <label class='text-danger'>Invalid captcha!</label>
-                        <?php endif; ?>
-                    <?php else : ?>
-                        <label class='text-warning'>Please fill up the required field!</label>
+                    <?php if (isset($errors['reply_content'])) : ?>
+                        <div class="text-danger"><?php echo $errors['reply_content']; ?></div>
                     <?php endif; ?>
-                <?php endif; ?>
+                </div>
+                <div>
+                    <img src="inc/captcha.inc.php" alt="captcha" />
+                    <br />
+                    <br />
+                    <input type="text" name="captcha" />
+                    <?php if (isset($errors['captcha'])) : ?>
+                        <div class="text-danger"><?php echo $errors['captcha']; ?></div>
+                    <?php endif; ?>
+                </div>
                 <br /><br />
-                <button name="verify" class="btn btn-primary">Verify</button>
+                <input type="hidden" name="verify" value="1">
+                <button type="submit" class="btn btn-primary">Post Reply</button>
             </form>
         </div>
 

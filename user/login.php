@@ -4,76 +4,88 @@ include('../inc/database.inc.php');
 include('../inc/config.inc.php');
 include('../inc/header.inc.php');
 
+include('../classes/form_validator.classes.php');
+include('../classes/form_sanitizer.classes.php');
+
 // Initialize variables for form data
 $username_or_email = $password = "";
 $username_or_email_err = $password_err = "";
 
 // Process form data when form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Validate username/email
-    if (empty(trim($_POST["username_or_email"]))) {
-        $username_or_email_err = "Please enter username or email.";
-    } else {
-        $username_or_email = trim($_POST["username_or_email"]);
-    }
 
-    // Validate password
-    if (empty(trim($_POST["password"]))) {
-        $password_err = "Please enter your password.";
-    } else {
-        $password = trim($_POST["password"]);
-    }
+    $sanitizedData = FormSanitizer::sanitize($_POST);
+    $validator = new FormValidator($sanitizedData);
 
-    // Check input errors before database lookup
-    if (empty($username_or_email_err) && empty($password_err)) {
-        // Prepare a SELECT statement
-        $sql = "SELECT user_id, role_id, username, email, password FROM users WHERE username = :username OR email = :email";
+    if (empty($errors)) {
+        // Validate username/email
+        if (empty(trim($sanitizedData["username_or_email"]))) {
+            $username_or_email_err = "Please enter username or email.";
+        } else {
+            $username_or_email = trim($sanitizedData["username_or_email"]);
+        }
 
-        if ($stmt = $db->prepare($sql)) {
-            // Bind variables to the prepared statement as parameters
-            $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
-            $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
+        // Validate password
+        if (empty(trim($sanitizedData["password"]))) {
+            $password_err = "Please enter your password.";
+        } else {
+            $password = trim($sanitizedData["password"]);
+        }
 
-            // Set parameters
-            $param_username = $param_email = $username_or_email;
 
-            // Attempt to execute the prepared statement
-            if ($stmt->execute()) {
-                // Check if username/email exists
-                if ($stmt->rowCount() == 1) {
-                    if ($row = $stmt->fetch()) {
-                        $id = $row["user_id"];
-                        $role_id = $row["role_id"];
-                        $username = $row["username"];
-                        $email = $row["email"];
-                        $db_password = $row["password"];
+        // Check input errors before database lookup
+        if (empty($username_or_email_err) && empty($password_err)) {
+            // Prepare a SELECT statement
+            $sql = "SELECT user_id, role_id, username, email, password_hash FROM users WHERE username = :username OR email = :email";
 
-                        // Compare entered password with the password stored in the database
-                        if ($password === $db_password) {
 
-                            // Store data in session variables
-                            $_SESSION["loggedin"] = true;
-                            $_SESSION["user_id"] = $id;
-                            $_SESSION["role_id"] = $role_id;
-                            $_SESSION["username"] = $username;
-                            $_SESSION["email"] = $email;
+            if ($stmt = $db->prepare($sql)) {
+                // Bind variables to the prepared statement as parameters
+                $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
+                $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
 
-                            // Redirect user to home page
-                            header("location: ../index.php");
-                        } else {
-                            // Display an error message if password is not valid
-                            $password_err = "The password you entered was not valid.";
+                // Set parameters
+                $param_username = $param_email = $username_or_email;
+
+                // Attempt to execute the prepared statement
+                if ($stmt->execute()) {
+                    // Check if username/email exists
+                    if ($stmt->rowCount() == 1) {
+                        if ($row = $stmt->fetch()) {
+                            var_dump($row);
+                            $id = $row["user_id"];
+                            $role_id = $row["role_id"];
+                            $username = $row["username"];
+                            $email = $row["email"];
+                            $db_password = $row["password_hash"];
+
+                            // Verify password
+                            if (password_verify($password, $db_password)) {
+                                // Password is correct, store data in session variables
+                                $_SESSION["loggedin"] = true;
+                                $_SESSION["user_id"] = $id;
+                                $_SESSION["role_id"] = $role_id;
+                                $_SESSION["username"] = $username;
+                                $_SESSION["email"] = $email;
+
+                                // Redirect user to home page
+                                header("location: ../index.php");
+                                exit();
+                            } else {
+                                // Display an error message if password is not valid
+                                $password_err = "The password you entered was not valid.";
+                            }
                         }
+                    } else {
+                        // Display an error message if username/email doesn't exist
+                        $username_or_email_err = "No account found with that username or email.";
                     }
                 } else {
-                    // Display an error message if username/email doesn't exist
-                    $username_or_email_err = "No account found with that username or email.";
+                    echo "Oops! Something went wrong. Please try again later.";
                 }
-            } else {
-                echo "Oops! Something went wrong. Please try again later.";
-            }
 
-            unset($stmt);
+                unset($stmt);
+            }
         }
     }
 
@@ -95,18 +107,18 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <div class="login_container p-4">
                     <h2>Login</h2>
                     <form action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]); ?>" method="post">
-                        <div <?php echo (!empty($username_or_email_err)) ? 'has-error' : ''; ?>">
+                        <div <?php echo (!empty($username_or_email_err)) ? 'has-error' : ''; ?>>
                             <label for="username_or_email">Username or Email:</label>
                             <input type="text" class="form-control" id="username_or_email" name="username_or_email" value="<?php echo htmlspecialchars($username_or_email); ?>">
-                            <span><?php echo htmlspecialchars($username_or_email_err); ?></span>
+                            <span class="loginerr"><?php echo htmlspecialchars($username_or_email_err); ?></span>
                         </div>
-                        <div <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>">
+                        <div <?php echo (!empty($password_err)) ? 'has-error' : ''; ?>>
                             <label for="password">Password:</label>
                             <input type="password" class="form-control" id="password" name="password">
-                            <span><?php echo htmlspecialchars($password_err); ?></span>
+                            <span class="loginerr"><?php echo htmlspecialchars($password_err); ?></span>
                         </div>
 
-                        <button class="btn btn-primary w-100 px-4 type=" submit">Login</button>
+                        <button class="btn btn-primary w-100 px-4" type="submit">Login</button>
                     </form>
                     <div class="col-md-auto  ">
                         <p>Don't have an account? <a href="register.php">Register here</a></p>

@@ -23,6 +23,11 @@
     border-right: 1px solid #030303; 
 }
 
+.loginerr{
+    font-weight: bold;
+    color: #e70000;
+
+}
 .topic_starter_username {
     font-weight: bold;
 }

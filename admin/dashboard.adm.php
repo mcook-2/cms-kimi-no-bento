@@ -51,7 +51,7 @@ include('header.adm.php');
             <h2>Recent Posts</h2>
             <ul>
                 <?php foreach ($latest_posts as $post) : ?>
-                    <li><a href="edit_post.php?id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></li>
+                    <li><a href="view_posts.adm.php?id=<?= $post['post_id'] ?>"><?= $post['title'] ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -59,7 +59,7 @@ include('header.adm.php');
             <h2>Recent Topics</h2>
             <ul>
                 <?php foreach ($latest_topics as $topic) : ?>
-                    <li><a href="edit_topic.php?id=<?= $topic['topic_id'] ?>"><?= $topic['title'] ?></a></li>
+                    <li><a href="view_topics.adm.php?id=<?= $topic['topic_id'] ?>"><?= $topic['title'] ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -67,7 +67,7 @@ include('header.adm.php');
             <h2>Recent Categories</h2>
             <ul>
                 <?php foreach ($latest_categories as $category) : ?>
-                    <li><a href="edit_category.php?id=<?= $category['category_id'] ?>"><?= $category['name'] ?></a></li>
+                    <li><a href="view_categories.adm.php?id=<?= $category['category_id'] ?>"><?= $category['name'] ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -75,7 +75,7 @@ include('header.adm.php');
             <h2>Recent Users</h2>
             <ul>
                 <?php foreach ($latest_users as $user) : ?>
-                    <li><a href="edit_user.php?id=<?= $user['user_id'] ?>"><?= $user['username'] ?></a></li>
+                    <li><a href="view_users.adm.php?id=<?= $user['user_id'] ?>"><?= $user['username'] ?></a></li>
                 <?php endforeach; ?>
             </ul>
         </div>
@@ -123,6 +123,7 @@ include('header.adm.php');
             <div class="text-left mb-4">
                 <h2>Quick Actions</h2>
                 <a href="add_user.adm.php" class="btn btn-primary btn-lg">Add User</a>
+                <a href="create_category.adm.php" class="btn btn-lg btn-success">Create new Category</a>
             </div>
         </div>
     </div>

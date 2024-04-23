@@ -4,11 +4,17 @@
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
+
+
 // Check if sorting criteria is set
 $orderBy = isset($_GET['order_by']) ? $_GET['order_by'] : 'topic_id';
 $orderDir = isset($_GET['order_dir']) ? $_GET['order_dir'] : 'ASC';
 
 $searchTerm = isset($_GET['search']) ? $_GET['search'] : '';
+
+if (isset($_GET['id'])) {
+    $topicId = $_GET['id'];
+}
 
 // Define the number of items per page
 $itemsPerPage = isset($_GET['items_per_page']) ? intval($_GET['items_per_page']) : 10;
@@ -26,8 +32,13 @@ $stmt = $db->prepare("SELECT topics.*, users.username, categories.name
                       LEFT JOIN categories ON topics.category_id = categories.category_id
                       WHERE users.username LIKE :searchTerm OR topics.title LIKE :searchTerm
                         OR categories.name LIKE :searchTerm OR topics.topic_content LIKE :searchTerm
-                      ORDER BY $orderBy $orderDir
+                        ORDER BY " . (isset($_GET['id']) ? "topics.topic_id = :topicId DESC, " : "") . "$orderBy $orderDir
                       LIMIT :offset, :itemsPerPage");
+
+if (isset($_GET['id'])) {
+    $stmt->bindValue(':topicId', $topicId, PDO::PARAM_INT);
+}
+
 $stmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $stmt->bindValue(':offset', $offset, PDO::PARAM_INT);
 $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
@@ -118,7 +129,7 @@ include('header.adm.php');
         <tbody>
             <?php foreach ($topics as $topic) : ?>
                 <tr>
-                    <th scope="row" class="col-1"><?= $topic['topic_id'] ?></th>
+                    <th class="col-1"><?= isset($topicId) ? highlightSearchTerm($topic['topic_id'], $topicId) : $topic['topic_id'] ?></th>
                     <td class="col-1"><?= highlightSearchTerm($topic['name'], $searchTerm) ?></td>
                     <td class="col-1"><?= highlightSearchTerm($topic['username'], $searchTerm)  ?></td>
                     <td class="col-1"><?= highlightSearchTerm($topic['title'], $searchTerm)  ?></td>

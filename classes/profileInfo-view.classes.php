@@ -25,12 +25,21 @@ class ProfileInfoView extends ProfileInfo
         return $profileInfo[0]["profiles_introtext"];
     }
 
+
     public function fetchCategories($user_id)
     {
-        $categories = $this->getUserCategories($user_id);
+        $categories = $this->getCategories($user_id);
 
         return $categories;
     }
+
+    public function fetchCurrentCategoryTopic($topic_id)
+    {
+        $categoryTopic = $this->getCurrentTopicCategory($topic_id);
+
+        return $categoryTopic;
+    }
+
 
     public function fetchTopics($user_id)
     {
@@ -44,6 +53,14 @@ class ProfileInfoView extends ProfileInfo
         $posts = $this->getUserPosts($user_id);
 
         return $posts;
+    }
+
+
+    public function fetchCurrentPostTopic($post_id)
+    {
+        $postTopic = $this->getCurrentPostTopic($post_id);
+
+        return $postTopic;
     }
 
     public function fetchProfilePicture($user_id)

@@ -4,28 +4,25 @@ include('../inc/database.inc.php');
 include('header.adm.php');
 include('sidebar.adm.php');
 var_dump($_POST);
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if category_id is provided
     if (isset($_POST['category_id'])) {
         $category_id = $_POST['category_id'];
 
         // Check if the form is for updating or deleting
-        if (isset($_POST['update'])) {
+        if (!empty($_POST['name'])) {
             // Update category
-            if (isset($_POST['name'])) {
-                $name = htmlspecialchars($_POST['name']);
-                $stmt = $db->prepare("UPDATE categories SET name = :name WHERE category_id = :category_id");
-                $stmt->bindParam(':name', $name, PDO::PARAM_STR);
-                $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
-                if ($stmt->execute()) {
-                    // Redirect back to view_categories.adm.php with success message
-                    header("Location: view_categories.adm.php?success=true");
-                    exit();
-                } else {
-                    echo "Error updating category.";
-                }
+            $name = $_POST['name'];
+            $stmt = $db->prepare("UPDATE categories SET name = :name WHERE category_id = :category_id");
+            $stmt->bindParam(':name', $name, PDO::PARAM_STR);
+            $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
+            if ($stmt->execute()) {
+                // Redirect back to view_categories.adm.php with success message
+                header("Location: view_categories.adm.php?success=true");
+                exit();
             } else {
-                echo "Category name not provided.";
+                echo "Error updating category.";
             }
         } elseif (isset($_POST['delete'])) {
             // Delete category
@@ -39,7 +36,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 echo "Error deleting category.";
             }
         } else {
-            echo " Action not specified.";
+            echo "Category name not provided.";
         }
     } else {
         echo "Category ID not provided.";

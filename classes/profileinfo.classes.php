@@ -107,27 +107,10 @@ class ProfileInfo extends Database
         }
     }
 
-    protected function getUserCategories($user_id)
-    {
-        try {
-            $stmt = $this->connection()->prepare('SELECT category_id, name FROM categories WHERE user_id = ?');
-            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
-            $stmt->execute();
-            $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            return $categories;
-        } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
-            header("Location: ../index.php");
-            exit();
-        }
-    }
-
-
-
     protected function getUserTopics($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content FROM topics WHERE topic_starter_id = ?');
+            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content, category_id FROM topics WHERE topic_starter_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -138,6 +121,8 @@ class ProfileInfo extends Database
             exit();
         }
     }
+
+
 
 
     protected function getUserPosts($user_id)
@@ -156,15 +141,43 @@ class ProfileInfo extends Database
         }
     }
 
-    public function getUserCategoriesId($user_id, $category_id)
+    public function getCategories()
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT category_id, name FROM categories WHERE user_id = ? AND category_id =?');
-            $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
-            $stmt->bindValue(2, $category_id, PDO::PARAM_INT);
+            $stmt = $this->connection()->prepare('SELECT * FROM categories ');
             $stmt->execute();
             $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $categories;
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+    public function getCurrentTopicCategory($topic_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT c.name FROM categories c INNER JOIN topics t ON c.category_id = t.category_id WHERE t.topic_id = ?');
+            $stmt->execute([$topic_id]);
+            $category = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $category['name'];
+        } catch (PDOException $e) {
+            // Handle the exception (e.g., log the error, redirect, etc.)
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+
+    public function getCurrentPostTopic($post_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT t.title FROM topics t INNER JOIN posts p ON t.topic_id = p.topic_id WHERE p.post_id = ?');
+            $stmt->execute([$post_id]);
+            $topic = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $topic['title'];
         } catch (PDOException $e) {
             // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
@@ -177,7 +190,7 @@ class ProfileInfo extends Database
     public function getUserTopicsId($user_id, $topic_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content FROM topics WHERE topic_starter_id = ? AND topic_id = ?');
+            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content, category_id FROM topics WHERE topic_starter_id = ? AND topic_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
             $stmt->bindValue(2, $topic_id, PDO::PARAM_INT);
             $stmt->execute();

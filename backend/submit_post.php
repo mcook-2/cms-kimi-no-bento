@@ -14,14 +14,42 @@ if (!isLoggedIn()) {
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
+
+    $submittedCaptcha = $_POST['captcha'];
+
+    // Retrieve CAPTCHA value stored in the session
+    $captchaValue = $_SESSION['captcha'];
+
     $sanitizedData = FormSanitizer::sanitize($_POST);
+    $topic_id = $sanitizedData["topic_id"];
 
     $validator = new FormValidator($sanitizedData);
 
     // Validate form data
     $errors = $validator->validate();
 
-    if (empty($errors)) {
+    var_dump($errors);
+
+    //exit;
+    // Compare submitted CAPTCHA value with the one stored in the session
+    if ($submittedCaptcha !== $captchaValue) {
+        // CAPTCHA validation failed, redirect back to the form page with an error message
+        $_SESSION['errors']['captcha'] = "Invalid CAPTCHA code. Please try again.";
+        $errors = array_merge($errors, $_SESSION['errors']);
+        $flag = false;
+    }
+
+    if ($submittedCaptcha === $captchaValue) {
+        // Set a different value for 'verify'
+        $flag = true;
+    }
+
+
+
+
+
+
+    if (empty($errors) && $flag == true) {
 
         // Insert reply into the database
         echo "Form data validation successful. Inserting reply into the database...<br>";
@@ -47,7 +75,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit();
     } else {
         echo "Form not submitted.<br>";
-
+        $_POST['topic_id'];
         $_SESSION['errors'] = $errors;
         $_SESSION['submitted_data'] = $_POST; // Store submitted data in session
         header("Location: ../show_topic.php?topic_id=$topic_id");
