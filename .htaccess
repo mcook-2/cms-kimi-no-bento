@@ -1,23 +1,22 @@
 RewriteEngine On
 
-RewriteBase /cms-kimi-no-bento/
 
 
-RewriteRule ^community/all$ /cms-kimi-no-bento/community/all [L]
-RewriteRule ^community/sort/date$ /cms-kimi-no-bento/community/sort/date [L]
-RewriteRule ^community/sort/latest$ /cms-kimi-no-bento/community/sort/latest [L]
-RewriteRule ^community/sort/title$ /cms-kimi-no-bento/community/sort/title [L]
-RewriteRule ^community/category/([0-9]+)$ /cms-kimi-no-bento/community/category/$1 [L]
-RewriteRule ^community/topic/([0-9]+)$ /cms-kimi-no-bento/show_topic.php?topic_id=$1 [L]
+RewriteRule ^community/all$ /community/all [L]
+RewriteRule ^community/sort/date$ /community/sort/date [L]
+RewriteRule ^community/sort/latest$ /community/sort/latest [L]
+RewriteRule ^community/sort/title$ /community/sort/title [L]
+RewriteRule ^community/category/([0-9]+)$ /community/category/$1 [L]
+RewriteRule ^community/topic/([0-9]+)$ /show_topic.php?topic_id=$1 [L]
 
 
-RewriteRule ^about$ /cms-kimi-no-bento/about.php [L]
-RewriteRule ^user/account$ /cms-kimi-no-bento/user/account.php [L]
-RewriteRule ^user/view-all-posts$ /cms-kimi-no-bento/user/view_all_posts.php [L]
-RewriteRule ^user/edit/post/([0-9]+)$ /cms-kimi-no-bento/user/user_edit.php?post_id=$1 [L]
-RewriteRule ^user/edit/topic/([0-9]+)$ /cms-kimi-no-bento/user/user_edit.php?topic_id=$1 [L]
-RewriteRule ^user/profile/settings$ /cms-kimi-no-bento/user/profile_settings.php [L]
-RewriteRule ^user/login$ /cms-kimi-no-bento/user/login.php [L]
-RewriteRule ^user/register$ /cms-kimi-no-bento/user/register.php [L]
-RewriteRule ^search/(.*)$ /cms-kimi-no-bento/search.php?query=$1 [L]
-RewriteRule ^search/(.*)/(.*)$ /cms-kimi-no-bento/search.php?query=$1&category=$2 [L]
+RewriteRule ^about$ /about.php [L]
+RewriteRule ^user/account$ /user/account.php [L]
+RewriteRule ^user/view-all-posts$ /user/view_all_posts.php [L]
+RewriteRule ^user/edit/post/([0-9]+)$ /user/user_edit.php?post_id=$1 [L]
+RewriteRule ^user/edit/topic/([0-9]+)$ /user/user_edit.php?topic_id=$1 [L]
+RewriteRule ^user/profile/settings$ /user/profile_settings.php [L]
+RewriteRule ^user/login$ /user/login.php [L]
+RewriteRule ^user/register$ /user/register.php [L]
+RewriteRule ^search/(.*)$ /search.php?query=$1 [L]
+RewriteRule ^search/(.*)/(.*)$ /search.php?query=$1&category=$2 [L]
