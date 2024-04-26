@@ -1,5 +1,5 @@
 <?php
-define('BASE_URL', '/cms-kimi-no-bento/');
+define('BASE_URL', 'http://kiminobento.byethost3.com/');
 
 define('CSS_URL', BASE_URL . 'CSS/');
 define('IMG_URL', BASE_URL . 'img/');
