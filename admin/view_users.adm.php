@@ -1,10 +1,6 @@
 <?php
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
-include('../classes/database.classes.php');
-include('../classes/profileinfo.classes.php');
-include('../classes/profileinfo-contr.classes.php');
-include('../classes/profileinfo-view.classes.php');
 include('header.adm.php');
 
 // Check if sorting criteria is set

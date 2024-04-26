@@ -1,5 +1,9 @@
 <?php
-define('BASE_URL', '/cms-kimi-no-bento/');
+$protocol = isset($_SERVER['HTTPS']) && $_SERVER['HTTPS'] === 'on' ? "https" : "http";
+// Detect the current hostname
+$hostname = $_SERVER['HTTP_HOST'];
+// Construct the BASE_URL based on the detected protocol and hostname
+define('BASE_URL', $protocol . '://' . $hostname . '/cms-kimi-no-bento/');
 
 define('CSS_URL', BASE_URL . 'CSS/');
 define('IMG_URL', BASE_URL . 'img/');
