@@ -1,5 +1,5 @@
 <?php
-define('BASE_URL', 'https://seashell-app-fnmo7.ondigitalocean.app/');
+define('BASE_URL', '../');
 
 define('CSS_URL', BASE_URL . 'CSS/');
 define('IMG_URL', BASE_URL . 'img/');
