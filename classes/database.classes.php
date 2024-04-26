@@ -3,13 +3,12 @@
 class Database
 {
 
-
     protected function connection()
     {
         // Pre-set database connection parameters
-        $dsn = 'mysql:host=localhost;dbname=knb_database;charset=utf8';
-        $user = 'cms_user';
-        $pass = 'youllnevergeussthispassworditslong';
+        $dsn = 'mysql:host=localhost;dbname=id22091600_knb;charset=utf8';
+        $user = 'id22091600_kenzo';
+        $pass = 'H3adbang!23';
 
         try {
             $db = new PDO($dsn, $user, $pass);
