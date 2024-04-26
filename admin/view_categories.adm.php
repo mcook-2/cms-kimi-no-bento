@@ -1,6 +1,4 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
@@ -37,6 +35,7 @@ $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Pagination query
 $pgStmt = $db->prepare("SELECT categories.* 
                     FROM categories 
                     WHERE categories.name LIKE :searchTerm 
@@ -45,7 +44,6 @@ $pgStmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $pgStmt->execute();
 $pgStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Count total number of results after fetching the data
 $totalResults = $pgStmt->rowCount();
 
 // Calculate total number of pages
@@ -55,7 +53,6 @@ $totalPages = ceil($totalResults / $itemsPerPage);
 $paginationLinks = '';
 for ($i = 1; $i <= $totalPages; $i++) {
     $activeClass = ($page == $i) ? 'active' : '';
-    // Include $itemsPerPage and $searchTerm as parameters in the pagination links
     $paginationLinks .= "<li class='page-item $activeClass'><a class='page-link' href='?page=$i&items_per_page=$itemsPerPage&search=" . urlencode($searchTerm) . "'>$i</a></li>";
 }
 
@@ -67,8 +64,6 @@ function highlightSearchTerm($text, $searchTerm)
     return $text;
 }
 
-
-// Include header
 include('header.adm.php');
 ?>
 
@@ -146,15 +141,7 @@ include('header.adm.php');
                 <span class="<?= $itemsPerPage == 50 ? 'selected' : '' ?>"><a href="?items_per_page=50">50</a></span>
             </form>
         </div>
-
     </nav>
-
-    <?php
-    var_dump($itemsPerPage);
-    ?>
 </main>
-
-<?php include('footer.adm.php'); ?>
 </body>
-
-</html>
+<?php include('footer.adm.php'); ?>

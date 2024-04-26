@@ -2,8 +2,6 @@
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
-
-
 if (isset($_POST['entity']) && isset($_POST['id'])) {
     $entity = $_POST['entity'];
     $id = $_POST['id'];

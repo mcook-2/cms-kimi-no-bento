@@ -2,22 +2,19 @@
 include('../inc/config.inc.php');
 include('../inc/database.inc.php');
 
-
-// Include the FormValidator and FormSanitizer classes
 include('../classes/form_validator.classes.php');
 include('../classes/form_sanitizer.classes.php');
+
 include('../classes/database.classes.php');
 include('../classes/profileinfo.classes.php');
 include('../classes/profileinfo-contr.classes.php');
 
-// Process form data when the form is submitted
+
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Sanitize form data
     $sanitizedData = FormSanitizer::sanitize($_POST);
-
     // Instantiate FormValidator with sanitized data
     $validator = new FormValidator($sanitizedData);
-
     // Validate form data
     $errors = $validator->validate();
 
@@ -27,8 +24,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $email = $sanitizedData["email"];
         $password = $sanitizedData["password"];
         $confirm_password = $sanitizedData["confirm_password"];
-
-
 
         // Hash the password with the salt
         $hashed_password = password_hash($password, PASSWORD_DEFAULT);
@@ -98,15 +93,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             unset($_SESSION['submitted_data']);
             unset($stmt);
 
-            // Redirect to the success page
+            // Redirect to the home page
             header("location: ../index.php");
             exit();
         }
     } else {
-        // If there are validation errors, store errors and submitted data in session and redirect back to the registration form
+        // Redirect user & send errors back to registration form 
         $_SESSION['errors'] = $errors;
-        $_SESSION['submitted_data'] = $_POST; // Store submitted data in session
-        header("location: ../user/register.php"); // Redirect back to the registration form
+        $_SESSION['submitted_data'] = $_POST;
+        header("location: ../user/register.php");
         exit();
     }
 }

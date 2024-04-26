@@ -1,12 +1,13 @@
 <?php
 include_once('../inc/config.inc.php');
-include('../inc/header.inc.php');
+include_once('../inc/check_login.inc.php');
 
 include('../classes/database.classes.php');
 include('../classes/profileinfo.classes.php');
 include('../classes/profileinfo-contr.classes.php');
 include('../classes/profileinfo-view.classes.php');
 
+include('../inc/header.inc.php');
 $profileInfo = new ProfileInfo();
 // Initialize $topicTitle
 $crumbTitle = "";
@@ -17,7 +18,7 @@ if (isset($_GET['topic_id'])) {
     $topics = $profileInfo->getUserTopicsId($_SESSION["user_id"], $crumb_topic_id);
     // Check if topics array is not empty and get the first element
     if (!empty($topics)) {
-        $crumbTitle = $topics[0]['title'];
+        $crumbTitle = strip_tags(htmlspecialchars_decode($topics[0]['title']));
     }
 } elseif (isset($_GET['post_id'])) {
     // Check if post_id is set
@@ -26,10 +27,9 @@ if (isset($_GET['topic_id'])) {
     $posts = $profileInfo->getUserPostsId($_SESSION["user_id"], $crumb_post_id);
     // Check if posts array is not empty and get the first element
     if (!empty($posts)) {
-        $crumbTitle = $posts[0]['title'];
+        $crumbTitle = strip_tags(htmlspecialchars_decode($posts[0]['title']));
     }
 }
-
 
 // Check if there are any errors stored in the session
 if (isset($_SESSION['errors'])) {
@@ -46,6 +46,7 @@ if (isset($_SESSION['errors'])) {
         <li class="breadcrumb-item active" aria-current="page"><?php echo isset($crumbTitle) ? $crumbTitle : 'Post'; ?></li>
     </ol>
 </nav>
+<!-- Display errors -->
 <?php if (!empty($errors)) : ?>
     <div class="alert alert-danger">
         <ul>
@@ -58,6 +59,7 @@ if (isset($_SESSION['errors'])) {
 <section class="content">
     <div class="container">
         <div class="content-settings">
+            <!-- Table for user created Topics -->
             <?php if (isset($_GET['topic_id'])) : ?>
                 <h3 class="mb-4">Edit Topic</h3>
                 <?php
@@ -65,8 +67,7 @@ if (isset($_SESSION['errors'])) {
                 $categories = $profileInfo->getCategories();
                 $current_category = $profileInfo->getCurrentTopicCategory($topic_id);
                 ?>
-                <form action="../backend/user_content_update.php" method="post">
-
+                <form action="../backend/user_content_update.php" method="post" enctype="multipart/form-data">
                     <input type="hidden" name="topic_id" value="<?php echo isset($topic_id) ? $topic_id : ''; ?>">
                     <table class="table">
                         <tr>
@@ -76,7 +77,7 @@ if (isset($_SESSION['errors'])) {
                         <tr>
                             <th>Select New Category</th>
                             <td>
-                                <select id="category" class="form-control" name="category_name">
+                                <select id="category" class="form-control" name="category_name" style="height: auto;">
                                     <?php foreach ($categories as $category) : ?>
                                         <?php $selected = ($current_category == $category['name']) ? 'selected' : ''; ?>
                                         <option <?= $selected ?>><?= $category['name'] ?></option>
@@ -100,7 +101,39 @@ if (isset($_SESSION['errors'])) {
                         <?php
                         }
                         ?>
+                        <!-- Topic img delete or reupload (deletes previous upload) -->
+                        <?php
+                        $img = $profileInfo->getTopicImg($topic_id);
+                        if ($img) : ?>
+                            <tr>
+                                <th>Current Image:</th>
+                                <td>
+                                    <img src="../<?php echo $img; ?>" alt="Current Image" style="max-width: 200px; max-height: 200px;">
+                                <?php elseif (empty($img)) : ?>
+                                <th>Current Image:</th>
+                                <td>
+                                    <p>No image uploaded.</p>
+                                <?php endif; ?>
+                                <div class="form-group">
+                                    <label for="topic_image">Upload New Image (Optional):</label>
+                                    <input type="file" class="form-control-file" id="topic_image" name="topic_image" onchange="previewImage(event)">
+                                    <img id="imagePreview" src="#" alt="Preview" style="display: none; max-width: 200px; max-height: 200px;">
+                                </div>
+                                </td>
+                            </tr>
                     </table>
+                    <script>
+                        function previewImage(event) {
+                            var reader = new FileReader();
+                            reader.onload = function() {
+                                var preview = document.getElementById('imagePreview');
+                                preview.src = reader.result;
+                                preview.style.display = 'block';
+                            }
+                            reader.readAsDataURL(event.target.files[0]);
+                        }
+                    </script>
+                    <!-- Table for user created Topics -->
                 <?php elseif (isset($_GET['post_id'])) : ?>
                     <h3 class="mb-4">Edit Post</h3>
                     <?php
@@ -137,7 +170,12 @@ if (isset($_SESSION['errors'])) {
                     <div class="form-group">
                     </div>
                     <button type="submit" class="btn btn-primary" name="submit">Save Changes</button>
+                    <!-- Img delete button only shows if img_url in database -->
+                    <?php if (isset($img)) : ?>
+                        <a href="../backend/delete_img.php?topic_id=<?php echo $topic_id; ?>" class="btn btn-danger" id="delete-img-btn" onclick="return confirm('Are you sure you want to delete this image?')">Delete Image</a>
+                    <?php endif; ?>
                     </form>
+
         </div>
     </div>
 </section>

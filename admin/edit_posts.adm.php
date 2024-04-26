@@ -1,6 +1,4 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
@@ -12,8 +10,6 @@ if (!isset($_GET['post_id']) || empty($_GET['post_id'])) {
 }
 
 $post_id = $_GET['post_id'];
-
-// Fetch the post from the database
 // Fetch the post from the database with the username of the poster
 $stmt = $db->prepare("SELECT posts.*, users.username 
                       FROM posts 
@@ -28,8 +24,6 @@ if (!$post) {
     header("Location: dashboard.adm.php");
     exit();
 }
-
-
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $title = $_POST['title'];
@@ -69,8 +63,5 @@ include('header.adm.php');
         <button type="submit" class="btn btn-primary">Update Post</button>
     </form>
 </main>
-
-<?php include('footer.adm.php'); ?>
 </body>
-
-</html>
+<?php include('footer.adm.php'); ?>

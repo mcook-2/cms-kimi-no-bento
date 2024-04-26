@@ -15,7 +15,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     include('../classes/profileinfo-contr.classes.php');
 
     $profileInfo = new ProfileInfoContr($id, $username);
-
+    // set up default user profile
     $profileInfo->updateProfileInfo($about, $introTitle, $introText);
 
 

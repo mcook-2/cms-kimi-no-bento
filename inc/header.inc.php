@@ -1,24 +1,21 @@
 <?php
-define('BASE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/');
-define('CSS_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/CSS/');
-define('IMG_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/img/');
-define('TINYMCE_URL', 'http://localhost:31337/wd2/Project/cms-kimi-no-bento/lib/tinymce/js/tinymce/');
+define('BASE_URL', '/cms-kimi-no-bento/');
 
+define('CSS_URL', BASE_URL . 'CSS/');
+define('IMG_URL', BASE_URL . 'img/');
+define('TINYMCE_URL', BASE_URL . 'lib/tinymce/js/tinymce/');
 
 function logout()
 {
     // Unset all session variables
     $_SESSION = array();
 
-    // Destroy the session
     session_destroy();
 
-    // Redirect to the homepage or login page
     header("Location: " . BASE_URL . "index.php");
     exit;
 }
 
-// Check if the logout button is clicked
 if (isset($_POST['logout'])) {
     logout();
 }
@@ -31,8 +28,7 @@ if (isset($_POST['logout'])) {
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>CMS</title>
-    <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap-grid.min.css" />
-    <link rel="stylesheet" href="<?php echo CSS_URL; ?>bootstrap.min.css" />
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
     <link rel="stylesheet" href="<?php echo CSS_URL; ?>styles.css" />
     <script src="<?php echo TINYMCE_URL; ?>tinymce.min.js"></script>
 </head>
@@ -68,7 +64,7 @@ if (isset($_POST['logout'])) {
                     <li class="nav-item"><a class="nav-link" href="<?php echo BASE_URL; ?>user/login.php">Login / Register</a></li>
                 <?php endif; ?>
             </ul>
-            <form class="form-inline my-7 my-lg-0" action="<?php echo BASE_URL; ?>/search.php" method="GET">
+            <form class="form-inline my-7 my-lg-0" action="<?php echo BASE_URL; ?>search.php" method="GET">
                 <input type="text" class="form-control" name="query" placeholder="Search" aria-label="Search" aria-describedby="search-btn1">
                 <input type="hidden" name="page" value="1"> <!-- hidden input for page number -->
                 <div class="input-group-append">

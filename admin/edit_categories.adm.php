@@ -1,5 +1,4 @@
 <?php
-// Include necessary files and initialize database connection
 include('../inc/database.inc.php');
 include('header.adm.php');
 include('sidebar.adm.php');
@@ -32,7 +31,7 @@ if (isset($_GET['category_id'])) {
                 <button type="submit" class="btn btn-primary">Update Category</button>
             </form>
         </main>
-
+        </body>
 <?php
     } else {
         echo "Category not found.";
@@ -41,6 +40,5 @@ if (isset($_GET['category_id'])) {
     echo "Category ID not provided.";
 }
 
-// Include footer
 include('footer.adm.php');
 ?>

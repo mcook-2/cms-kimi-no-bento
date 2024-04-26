@@ -1,5 +1,4 @@
 <?php
-// Include necessary files
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 include('../classes/database.classes.php');
@@ -46,6 +45,7 @@ $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Pagination query
 $pgStmt = $db->prepare("SELECT users.user_id, users.username, users.email, roles.role_name, users.date_created 
                         FROM users 
                         INNER JOIN roles ON users.role_id = roles.role_id
@@ -55,7 +55,6 @@ $pgStmt->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
 $pgStmt->execute();
 $pgStmt->fetchAll(PDO::FETCH_ASSOC);
 
-// Count total number of results after fetching the data
 $totalResults = $pgStmt->rowCount();
 
 // Calculate total number of pages
@@ -65,12 +64,11 @@ $totalPages = ceil($totalResults / $itemsPerPage);
 $paginationLinks = '';
 for ($i = 1; $i <= $totalPages; $i++) {
     $activeClass = ($page == $i) ? 'active' : '';
-    // Include $itemsPerPage and $searchTerm as parameters in the pagination links
     $paginationLinks .= "<li class='page-item $activeClass'><a class='page-link' href='?page=$i&items_per_page=$itemsPerPage&search=" . urlencode($searchTerm) . "'>$i</a></li>";
 }
 
 
-
+// highlight search term text 
 function highlightSearchTerm($text, $searchTerm)
 {
     if (!empty($searchTerm)) {
@@ -86,7 +84,6 @@ function highlightSearchTerm($text, $searchTerm)
 
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <h2>View Users</h2>
-
     <div class="mb-2">
         <form method="get" class="form-inline">
             <div class="form-group mr-2">
@@ -138,7 +135,7 @@ function highlightSearchTerm($text, $searchTerm)
                         <!-- Form for deletion -->
                         <form action="delete.adm.php" method="POST" style="display: inline-block;">
                             <input type="hidden" name="entity" value="user">
-                            <input type="hidden" name="user_id" value="<?= $user['user_id'] ?>">
+                            <input type="hidden" name="id" value="<?= $user['user_id'] ?>">
                             <button type="submit" class="btn btn-danger btn-sm" onclick="return confirm('Are you sure you want to delete this user?')">Delete</button>
                         </form>
                     </td>
@@ -147,7 +144,6 @@ function highlightSearchTerm($text, $searchTerm)
         </tbody>
 
     </table>
-
     <!-- Display pagination links -->
     <nav aria-label="Page navigation">
         <ul class="pagination">
@@ -169,8 +165,5 @@ function highlightSearchTerm($text, $searchTerm)
 
     </nav>
 </main>
-
-<?php include('footer.adm.php'); ?>
 </body>
-
-</html>
+<?php include('footer.adm.php'); ?>

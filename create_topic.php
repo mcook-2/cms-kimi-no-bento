@@ -1,12 +1,12 @@
 <?php
 include('inc/database.inc.php');
 include_once('inc/config.inc.php');
+include_once('inc/check_login.inc.php');
 include('inc/header.inc.php');
 
 // Fetch categories from the database
 $stmt = $db->query("SELECT * FROM categories");
 $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
-var_dump($_SESSION);
 $contentValue = $titleValue  = '';
 // Check if there are any errors stored in the session
 if (isset($_SESSION['errors'])) {
@@ -35,7 +35,7 @@ if (isset($_SESSION['errors'])) {
             </ul>
         </div>
     <?php endif; ?>
-    <form action="backend/create_topic_process.php" method="post">
+    <form action="backend/create_topic_process.php" method="post" enctype="multipart/form-data">
         <div class="form-group">
             <label for="topic_title">Title:</label>
             <input type="text" class="form-control" id="topic_title" name="topic_title" value="<?= $titleValue ?>">
@@ -47,20 +47,37 @@ if (isset($_SESSION['errors'])) {
         </div>
         <div class="form-group">
             <label for="existing_category">Select Category:</label>
-            <select id="category" class="form-control" name="category_name">
+            <select id="category" class="form-control" name="category_name" style="height: auto;">
                 <?php foreach ($categories as $category) : ?>
                     <option><?= $category['name'] ?></option>
                 <?php endforeach; ?>
             </select>
         </div>
+        <!-- Image upload section -->
+        <div class="form-group">
+            <label for="topic_image">Upload Image (Optional):</label>
+            <input type="file" class="form-control-file" id="topic_image" name="topic_image" onchange="previewImage(event)">
+            <img id="imagePreview" src="#" alt="Preview" style="display: none; max-width: 200px; max-height: 200px;">
+        </div>
+        <script>
+            function previewImage(event) {
+                var reader = new FileReader();
+                reader.onload = function() {
+                    var preview = document.getElementById('imagePreview');
+                    preview.src = reader.result;
+                    preview.style.display = 'block';
+                }
+                reader.readAsDataURL(event.target.files[0]);
+            }
+        </script>
         <button type="submit" class="btn btn-primary">Create Topic</button>
     </form>
 </div>
-
 <script>
     tinymce.init({
         selector: 'textarea',
         menubar: 'file edit view'
+
     });
 </script>
 

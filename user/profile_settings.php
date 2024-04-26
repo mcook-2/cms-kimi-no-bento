@@ -1,5 +1,6 @@
 <?php
 include_once('../inc/config.inc.php');
+include_once('../inc/check_login.inc.php');
 include('../inc/header.inc.php');
 
 include('../classes/database.classes.php');
@@ -42,7 +43,7 @@ $profileInfo = new ProfileInfoView();
 
 <script>
     tinymce.init({
-        selector: 'textarea', // change this value according to your HTML
+        selector: 'textarea',
         menubar: 'file edit view'
     });
 </script>

@@ -4,16 +4,13 @@ include('../inc/database.inc.php');
 include('header.adm.php');
 include('sidebar.adm.php');
 
-$errors = array(); // Initialize an empty array to store errors
+$errors = array();
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Check if the name field is set and not empty
     if (isset($_POST['name']) && !empty($_POST['name'])) {
-        // Prepare the SQL statement to insert a new category
         $stmt = $db->prepare("INSERT INTO categories (name) VALUES (:name)");
-
-        // Bind the parameters and execute the statement
         $stmt->bindParam(':name', $_POST['name'], PDO::PARAM_STR);
+
         if ($stmt->execute()) {
             // Category created successfully
             header("Location: view_categories.adm.php?success=true");
@@ -29,7 +26,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 }
 
 ?>
-
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <h2>Create new Category</h2>
     <?php foreach ($errors as $error) : ?>
@@ -43,5 +39,5 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         <button type="submit" class="btn btn-primary">Create Category</button>
     </form>
 </main>
-
+</body>
 <?php include('footer.adm.php'); ?>

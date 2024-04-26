@@ -1,5 +1,4 @@
 <?php
-// Include necessary files and initialize database connection
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 include('../classes/database.classes.php');
@@ -11,9 +10,14 @@ include('sidebar.adm.php');
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if all required fields are filled
-    if (isset($_POST['user_id'], $_POST['username'], $_POST['email'], $_POST['role'])) {
+    $user_id = $_POST['user_id'];
+    if (
+        isset($_POST['user_id'], $_POST['username'], $_POST['email'], $_POST['role']) &&
+        !empty($_POST['user_id']) && !empty($_POST['username']) &&
+        !empty($_POST['email']) && !empty($_POST['role'])
+    ) {
         // Sanitize user input
-        $user_id = $_POST['user_id'];
+
         $username = htmlspecialchars($_POST['username']);
         $email = htmlspecialchars($_POST['email']);
         $role = htmlspecialchars($_POST['role']);
@@ -30,14 +34,15 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
             header("Location: view_users.adm.php?user_id=$user_id&success=true");
             exit();
         } else {
-            echo "Error updating user.";
+            header("Location: edit_user.adm.php?user_id=$user_id&error=updatefail");
+            exit();
         }
     } else {
-        echo "All fields are required.";
+        header("Location: edit_user.adm.php?user_id=$user_id&error=nullfields");
+        exit();
     }
 } else {
-    echo "Invalid request.";
+    header("Location: dashboard.adm.php?error=invalid_request");
+    exit();
 }
-
-// Include footer
 include('footer.adm.php');

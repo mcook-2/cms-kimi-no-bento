@@ -1,6 +1,4 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
@@ -30,7 +28,7 @@ $topic = $stmt->fetch(PDO::FETCH_ASSOC);
 // Check if the topic exists
 if (!$topic) {
     // Redirect to a page indicating that the topic does not exist
-    header("Location: error_page.php?error=topic_not_found");
+    header("Location: view_topics.adm.php?error=topic_not_found");
     exit();
 }
 
@@ -39,7 +37,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Retrieve form data
     $title = $_POST['title'];
     $content = $_POST['content'];
-    // You may want to add more validation and sanitization here
 
     // Update the topic in the database
     $updateStmt = $db->prepare("UPDATE topics SET title = :title, topic_content = :content WHERE topic_id = :topic_id");
@@ -53,7 +50,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     exit();
 }
 
-// Include header
 include('header.adm.php');
 ?>
 <script src="<?php echo TINYMCE_URL; ?>tinymce.min.js"></script>
@@ -86,8 +82,6 @@ $current_category = $profileInfo->getCurrentTopicCategory($topic_id); ?>
     </form>
 </main>
 
-
-<?php include('footer.adm.php'); ?>
 </body>
 <script>
     tinymce.init({
@@ -97,4 +91,4 @@ $current_category = $profileInfo->getCurrentTopicCategory($topic_id); ?>
 </script>
 
 
-</html>
+<?php include('footer.adm.php'); ?>

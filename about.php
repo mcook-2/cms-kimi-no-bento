@@ -9,7 +9,7 @@ include('inc/header.inc.php');
             <li class="breadcrumb-item active" aria-current="page">About Us</li>
         </ol>
     </nav>
-    <div class="row">
+    <div class="row border-0">
         <div class="col-md-6">
             <h2>About Us</h2>
             <p>Welcome to Kimi no Bento, your ultimate destination for delicious and beautifully crafted Japanese-inspired bento boxes. Our passion for fresh ingredients and authentic flavors drives us to create exquisite bento box creations that delight the senses.</p>

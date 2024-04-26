@@ -16,7 +16,15 @@ class ProfileInfoContr extends ProfileInfo
     {
         $profileAbout = "Introduce your self here! whatever floats your boat";
         $profileTitle = "Hi! I am " . $this->username;
-        $default_pfp = '../img/default_imgs/cat_bento.png';
+
+        $defaultImages = [
+            "../img/default_imgs/dog.jpg",
+            "../img/default_imgs/cat_bento.png",
+            "../img/default_imgs/default_bento_2.png"
+        ];
+        $randomPfp = array_rand($defaultImages);
+
+        $default_pfp = $defaultImages[$randomPfp];
 
         $profileText = "Welcome to my corner of the web. Take a look around and make yourself comfortable.";
         $this->setProfileInfo($profileAbout, $profileTitle, $profileText, $this->user_id);
@@ -25,7 +33,6 @@ class ProfileInfoContr extends ProfileInfo
 
     public function updateProfileInfo($about, $introTitle, $introText)
     {
-        // error handle
         if ($this->emptyInputCheck($about, $introTitle, $introText) == true) {
             header("location: ../user/profile_settings.php?error=emptyinput");
             exit();

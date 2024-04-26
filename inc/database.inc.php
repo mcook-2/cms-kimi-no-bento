@@ -3,9 +3,6 @@ define('DB_DSN', 'mysql:host=localhost;dbname=knb_database;charset=utf8');
 define('DB_USER', 'cms_user');
 define('DB_PASS', 'youllnevergeussthispassworditslong');
 
-//define('DB_USER', 'admin');
-//define('DB_PASS', 'K!nt@M@B3nt0');
-
 //  PDO is PHP Data Objects
 //  mysqli <-- BAD. 
 //  PDO <-- GOOD.

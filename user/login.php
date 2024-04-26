@@ -35,12 +35,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
         // Check input errors before database lookup
         if (empty($username_or_email_err) && empty($password_err)) {
-            // Prepare a SELECT statement
+
             $sql = "SELECT user_id, role_id, username, email, password_hash FROM users WHERE username = :username OR email = :email";
 
-
             if ($stmt = $db->prepare($sql)) {
-                // Bind variables to the prepared statement as parameters
                 $stmt->bindParam(":username", $param_username, PDO::PARAM_STR);
                 $stmt->bindParam(":email", $param_email, PDO::PARAM_STR);
 
@@ -52,7 +50,6 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                     // Check if username/email exists
                     if ($stmt->rowCount() == 1) {
                         if ($row = $stmt->fetch()) {
-                            var_dump($row);
                             $id = $row["user_id"];
                             $role_id = $row["role_id"];
                             $username = $row["username"];
@@ -102,7 +99,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 <li class="breadcrumb-item active" aria-current="page">Login</li>
             </ol>
         </nav>
-        <div class="row justify-content-center">
+        <div class="row justify-content-center border-0">
             <div class="col-md-6">
                 <div class="login_container p-4">
                     <h2>Login</h2>
@@ -148,14 +145,13 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                             <p>Pass: <strong>But youre s0 supreme!</strong></p>
                         </div>
                     </div>
-
-
                 </div>
             </div>
         </div>
     </div>
+</div>
 
 
-    <?php
-    include('../inc/footer.inc.php');
-    ?>
+<?php
+include('../inc/footer.inc.php');
+?>

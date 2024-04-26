@@ -1,10 +1,6 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
-
-
 
 // Check if sorting criteria is set
 $orderBy = isset($_GET['order_by']) ? $_GET['order_by'] : 'topic_id';
@@ -25,7 +21,7 @@ $page = isset($_GET['page']) ? $_GET['page'] : 1;
 // Calculate the offset
 $offset = ($page - 1) * $itemsPerPage;
 
-// Fetch topics with additional information
+// Fetch topics with username & category name
 $stmt = $db->prepare("SELECT topics.*, users.username, categories.name 
                       FROM topics 
                       LEFT JOIN users ON topics.topic_starter_id = users.user_id 
@@ -45,6 +41,7 @@ $stmt->bindValue(':itemsPerPage', $itemsPerPage, PDO::PARAM_INT);
 $stmt->execute();
 $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
+// Pagination query
 $pgStmt = $db->prepare("SELECT topics.*, users.username, categories.name 
                       FROM topics 
                       LEFT JOIN users ON topics.topic_starter_id = users.user_id 
@@ -65,11 +62,10 @@ $totalPages = ceil($totalResults / $itemsPerPage);
 $paginationLinks = '';
 for ($i = 1; $i <= $totalPages; $i++) {
     $activeClass = ($page == $i) ? 'active' : '';
-    // Include $itemsPerPage and $searchTerm as parameters in the pagination links
     $paginationLinks .= "<li class='page-item $activeClass'><a class='page-link' href='?page=$i&items_per_page=$itemsPerPage&search=" . urlencode($searchTerm) . "'>$i</a></li>";
 }
 
-
+// highlight search term text 
 function highlightSearchTerm($text, $searchTerm)
 {
     if (!empty($searchTerm)) {
@@ -78,13 +74,10 @@ function highlightSearchTerm($text, $searchTerm)
     return $text;
 }
 
-
-// Include header
 include('header.adm.php');
 ?>
 
 <?php include('sidebar.adm.php'); ?>
-
 <main role="main" class="col-md-9 ml-sm-auto col-lg-10 px-4">
     <h2>View Topics</h2>
     <div>
@@ -168,14 +161,6 @@ include('header.adm.php');
         </div>
 
     </nav>
-
-    <?php
-    var_dump($itemsPerPage);
-    ?>
-
 </main>
-
-<?php include('footer.adm.php'); ?>
 </body>
-
-</html>
+<?php include('footer.adm.php'); ?>

@@ -16,7 +16,16 @@ if (!empty($_GET['query'])) {
     $searchTerm = $_GET['query'];
 }
 
-$selectedCategory = !empty($_GET['category']) ? $_GET['category'] : $searchTerm;
+$selectedCategory = !empty($_GET['category']) ? $_GET['category'] : '';
+
+// Check if a category is selected
+if (!empty($selectedCategory)) {
+    // If a category is selected, only search within that category
+    $categoryCondition = " AND categories.name = :selectedCategory ";
+} else {
+    // If no category is selected, search in all categories
+    $categoryCondition = "";
+}
 
 $stmt = $db->prepare("SELECT name FROM categories");
 $stmt->execute();
@@ -44,16 +53,17 @@ $stmtPosts = $db->prepare("
     LEFT JOIN 
         categories ON topics.category_id = categories.category_id
     WHERE 
-        users.username LIKE :searchTerm 
-        OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm
-        OR categories.name LIKE :setCategory 
-        OR posts.content LIKE :searchTerm
-        OR posts.title LIKE :searchTerm
+    (users.username LIKE :searchTerm 
+    OR topics.title LIKE :searchTerm
+    OR posts.content LIKE :searchTerm
+    OR posts.title LIKE :searchTerm)
+    $categoryCondition
     ORDER BY posts.date_created DESC
 ");
 $stmtPosts->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-$stmtPosts->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
+if (!empty($selectedCategory)) {
+    $stmtPosts->bindValue(':selectedCategory', $selectedCategory, PDO::PARAM_STR);
+}
 $stmtPosts->execute();
 $posts = $stmtPosts->fetchAll(PDO::FETCH_ASSOC);
 
@@ -80,15 +90,16 @@ $pgPosts = $db->prepare("
     LEFT JOIN 
         categories ON topics.category_id = categories.category_id
     WHERE 
-        users.username LIKE :searchTerm 
+        (users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm
-        OR categories.name LIKE :setCategory  
         OR posts.content LIKE :searchTerm
-        OR posts.title LIKE :searchTerm
+        OR posts.title LIKE :searchTerm)
+        $categoryCondition
 ");
 $pgPosts->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-$pgPosts->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
+if (!empty($selectedCategory)) {
+    $pgPosts->bindValue(':selectedCategory', $selectedCategory, PDO::PARAM_STR);
+}
 $pgPosts->execute();
 $totalPosts = $pgPosts->fetchAll(PDO::FETCH_ASSOC);
 
@@ -111,18 +122,20 @@ $stmtTopics = $db->prepare("
     LEFT JOIN 
         categories ON topics.category_id = categories.category_id
     WHERE 
-        users.username LIKE :searchTerm 
+        (users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm
-        OR categories.name LIKE :setCategory  
-        OR topics.topic_content LIKE :searchTerm
+        OR topics.topic_content LIKE :searchTerm)
+        $categoryCondition
     ORDER BY topics.date_created DESC
 ");
 $stmtTopics->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-$stmtTopics->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
+if (!empty($selectedCategory)) {
+    $stmtTopics->bindValue(':selectedCategory', $selectedCategory, PDO::PARAM_STR);
+}
 $stmtTopics->execute();
 $topics = $stmtTopics->fetchAll(PDO::FETCH_ASSOC);
 
+//SQL query for topics pagination
 $pgTopics = $db->prepare("
     SELECT 
         topics.topic_id AS topic_id,
@@ -142,15 +155,16 @@ $pgTopics = $db->prepare("
     LEFT JOIN 
         categories ON topics.category_id = categories.category_id
     WHERE 
-        users.username LIKE :searchTerm 
+        (users.username LIKE :searchTerm 
         OR topics.title LIKE :searchTerm
-        OR categories.name LIKE :searchTerm
-        OR categories.name LIKE :setCategory  
-        OR topics.topic_content LIKE :searchTerm
+        OR topics.topic_content LIKE :searchTerm)
+        $categoryCondition
     ORDER BY topics.date_created DESC
 ");
 $pgTopics->bindValue(':searchTerm', "%$searchTerm%", PDO::PARAM_STR);
-$pgTopics->bindValue(':setCategory', "%$selectedCategory%", PDO::PARAM_STR);
+if (!empty($selectedCategory)) {
+    $pgTopics->bindValue(':selectedCategory', $selectedCategory, PDO::PARAM_STR);
+}
 $pgTopics->execute();
 $totalTopics = $pgTopics->fetchAll(PDO::FETCH_ASSOC);
 
@@ -194,17 +208,17 @@ for ($i = 1; $i <= $totalPages; $i++) {
     $paginationLinks .= "<li class='page-item $activeClass'><a class='page-link' href='$link'>$i</a></li>";
 }
 
-
+// start index for pagination
 $startIndex = ($page - 1) * $itemsPerPage;
+
 ?>
 
-
-
-<div class="container"> <!-- Breadcrumb navigation -->
+<!-- Breadcrumb navigation -->
+<div class="container">
     <nav aria-label="breadcrumb">
         <ol class="breadcrumb">
             <li class="breadcrumb-item"><a href="index.php">Home</a></li>
-            <li class="breadcrumb-item active" aria-current="page">Search Results for "<?php echo htmlspecialchars($searchTerm); ?>"</li>
+            <li class="breadcrumb-item active" aria-current="page">Search Results for "<?php echo htmlspecialchars($searchTerm); ?>" in "<?php echo htmlspecialchars(empty($selectedCategory) ? "All Categories" : $selectedCategory); ?>"</li>
         </ol>
     </nav>
 
@@ -216,7 +230,7 @@ $startIndex = ($page - 1) * $itemsPerPage;
                 <button class="btn btn-outline-secondary" type="submit" id="search-btn2">Search</button>
             </div>
             <label for="categorySelect">Select Category:</label>
-            <select id="categorySelect" class="form-control" name="category">
+            <select id="categorySelect" class="form-control" name="category" style="height: auto;">
                 <option value="">All Categories</option>
                 <?php foreach ($categories as $category) : ?>
                     <option value="<?php echo $category; ?>"><?php echo $category; ?></option>
@@ -224,6 +238,7 @@ $startIndex = ($page - 1) * $itemsPerPage;
             </select>
         </div>
     </form>
+    <!-- table for search query results -->
     <div class="row border-0">
         <div class=" col border-0">
             <table class="table ">
@@ -238,18 +253,18 @@ $startIndex = ($page - 1) * $itemsPerPage;
                                 <div class="row border-0 bg-light">
                                     <div class="col-auto border-0 ">
                                         <div class="user-icon-bordered rounded-circle">
-                                            <img src="<?php echo $isPost ? $result['post_author_pfp'] : $result['topic_starter_pfp']; ?>" alt="<?php echo $isPost ? $result['post_author'] : $result['topic_starter']; ?>" class="rounded-circle" width="50" height="50">
+                                            <img src="cms-kimi-no-bento/<?php echo $isPost ? $result['post_author_pfp'] : $result['topic_starter_pfp']; ?>" alt="<?php echo $isPost ? $result['post_author'] : $result['topic_starter']; ?>" class="rounded-circle" width="50" height="50">
                                         </div>
                                     </div>
                                     <div class="col border-0">
                                         <h4 class="searchitem-title">
                                             <span><?php echo $isPost ? $result['post_author'] : $result['topic_starter']; ?></span>
                                             <?php echo $isPost ? 'commented in' : 'created'; ?>
-                                            <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>" title="<?php echo $result['topic_title']; ?>"><?php echo $result['topic_title']; ?></a>
+                                            <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>" title="<?php echo $result['topic_title']; ?>"><?php echo strip_tags(htmlspecialchars_decode($result['topic_title'])); ?></a>
                                         </h4>
                                         <div class="searchitem-body text-content">
                                             <?php if ($isPost) : ?>
-                                                Title: <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>#<?php echo $result['post_id']; ?>" title="<?php echo $result['post_title']; ?>"><?php echo $result['post_title']; ?></a>
+                                                Title: <a href="show_topic.php?topic_id=<?php echo $result['topic_id']; ?>#<?php echo $result['post_id']; ?>" title="<?php echo strip_tags(htmlspecialchars_decode($result['post_title'])); ?>"><?php echo strip_tags(htmlspecialchars_decode($result['post_title'])); ?></a>
                                                 <br>
                                             <?php endif; ?>
                                             <?php echo $isPost ? strip_tags(htmlspecialchars_decode($result['post_content'])) : strip_tags(htmlspecialchars_decode($result['topic_content'])); ?>

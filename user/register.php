@@ -62,7 +62,6 @@ if (isset($_SESSION['errors'])) {
             </form>
         </div>
     </div>
-
     <div class="row p-1 justify-content-center ">
         <div class="col-md-6 ">
             <div class="row justify-content-center border-bottom-0">
@@ -74,7 +73,6 @@ if (isset($_SESSION['errors'])) {
     </div>
 
 </div>
-
 <?php
 include('../inc/footer.inc.php');
 ?>

@@ -11,7 +11,6 @@ class ProfileInfo extends Database
             $profileData = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $profileData;
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -29,10 +28,9 @@ class ProfileInfo extends Database
                 return $result['profiles_pfp']; // Return the profile picture path directly
             } else {
                 // Return a default profile picture if none is found
-                return '../img/default imgs/cat_bento.png'; // Replace this with the path to your default profile picture
+                return '../img/default imgs/cat_bento.png';
             }
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -49,7 +47,6 @@ class ProfileInfo extends Database
             $stmt->execute();
             return true; // Return true if update was successful
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -60,14 +57,13 @@ class ProfileInfo extends Database
     {
         try {
             $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_about = ?, profiles_introtitle = ?, profiles_introtext = ? WHERE user_id = ?');
-            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
-            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
-            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
-            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR);
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR);
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR);
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             // No need to fetch data after an update operation
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -77,14 +73,13 @@ class ProfileInfo extends Database
     {
         try {
             $stmt = $this->connection()->prepare('INSERT INTO profiles (profiles_about, profiles_introtitle, profiles_introtext, user_id) VALUES (?, ?, ?, ?)');
-            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
-            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
-            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
-            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR);
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR);
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR);
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             // No need to fetch data after an insert operation
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -94,29 +89,58 @@ class ProfileInfo extends Database
     {
         try {
             $stmt = $this->connection()->prepare('UPDATE profiles SET profiles_about = ?, profiles_introtitle = ?, profiles_introtext = ? WHERE user_id = ?');
-            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR); // Bind profileAbout parameter as string
-            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR); // Bind profileTitle parameter as string
-            $stmt->bindValue(3, $profileText, PDO::PARAM_STR); // Bind profileText parameter as string
-            $stmt->bindValue(4, $user_id, PDO::PARAM_INT); // Bind user_id parameter as integer
+            $stmt->bindValue(1, $profileAbout, PDO::PARAM_STR);
+            $stmt->bindValue(2, $profileTitle, PDO::PARAM_STR);
+            $stmt->bindValue(3, $profileText, PDO::PARAM_STR);
+            $stmt->bindValue(4, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             // No need to fetch data after an update operation
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
     }
 
+    public function updateTopicImg($filePath, $topic_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('UPDATE topics SET img_url = ? WHERE topic_id = ?');
+            $stmt->bindValue(1, $filePath, PDO::PARAM_STR);
+            $stmt->bindValue(2, $topic_id, PDO::PARAM_INT);
+
+            $stmt->execute();
+            return true; // Return true if update was successful
+        } catch (PDOException $e) {
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+    public function getTopicImg($topic_id)
+    {
+        try {
+            $stmt = $this->connection()->prepare('SELECT img_url FROM topics WHERE topic_id = ?');
+            $stmt->bindValue(1, $topic_id, PDO::PARAM_INT);
+            $stmt->execute();
+            $img_url = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $img_url[0]["img_url"];
+        } catch (PDOException $e) {
+            header("Location: ../index.php");
+            exit();
+        }
+    }
+
+
+
     protected function getUserTopics($user_id)
     {
         try {
-            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content, category_id FROM topics WHERE topic_starter_id = ?');
+            $stmt = $this->connection()->prepare('SELECT topic_id, title, topic_content, category_id, img_url FROM topics WHERE topic_starter_id = ?');
             $stmt->bindValue(1, $user_id, PDO::PARAM_INT);
             $stmt->execute();
             $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $topics;
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -134,8 +158,6 @@ class ProfileInfo extends Database
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $posts;
         } catch (PDOException $e) {
-            // Handle the exception
-            // For simplicity, redirect to index.php in case of error
             header("Location: ../index.php");
             exit();
         }
@@ -149,7 +171,6 @@ class ProfileInfo extends Database
             $categories = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $categories;
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -163,7 +184,6 @@ class ProfileInfo extends Database
             $category = $stmt->fetch(PDO::FETCH_ASSOC);
             return $category['name'];
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -179,7 +199,6 @@ class ProfileInfo extends Database
             $topic = $stmt->fetch(PDO::FETCH_ASSOC);
             return $topic['title'];
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
             header("Location: ../index.php");
             exit();
         }
@@ -197,8 +216,7 @@ class ProfileInfo extends Database
             $topics = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $topics;
         } catch (PDOException $e) {
-            // Handle the exception (e.g., log the error, redirect, etc.)
-            //header("Location: ../index.php");
+            header("Location: ../index.php");
             exit();
         }
     }
@@ -214,8 +232,6 @@ class ProfileInfo extends Database
             $posts = $stmt->fetchAll(PDO::FETCH_ASSOC);
             return $posts;
         } catch (PDOException $e) {
-            // Handle the exception
-            // For simplicity, redirect to index.php in case of error
             header("Location: ../index.php");
             exit();
         }

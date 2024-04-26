@@ -6,12 +6,10 @@ include('../classes/form_sanitizer.classes.php');
 
 // Check if the user is logged in
 if (!isLoggedIn()) {
-    // Redirect the user to the login page if not logged in
     header("Location: user/login.php");
     exit();
 }
 
-// Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
 
 
@@ -28,31 +26,23 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Validate form data
     $errors = $validator->validate();
 
-    var_dump($errors);
-
-    //exit;
     // Compare submitted CAPTCHA value with the one stored in the session
     if ($submittedCaptcha !== $captchaValue) {
         // CAPTCHA validation failed, redirect back to the form page with an error message
         $_SESSION['errors']['captcha'] = "Invalid CAPTCHA code. Please try again.";
         $errors = array_merge($errors, $_SESSION['errors']);
+
         $flag = false;
     }
 
     if ($submittedCaptcha === $captchaValue) {
-        // Set a different value for 'verify'
+
         $flag = true;
     }
-
-
-
-
-
 
     if (empty($errors) && $flag == true) {
 
         // Insert reply into the database
-        echo "Form data validation successful. Inserting reply into the database...<br>";
 
         $author_id = $sanitizedData["user_id"];
         $topic_id = $sanitizedData["topic_id"];
@@ -69,15 +59,14 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         $stmt->execute();
 
         // Redirect user to the topic page after successfully submitting the post
-        echo "Reply inserted into the database successfully. Redirecting to the topic page...<br>";
         unset($_SESSION['submitted_data']);
         header("Location: ../show_topic.php?topic_id=$topic_id");
         exit();
     } else {
-        echo "Form not submitted.<br>";
+        // Redirect user & send errors back to topic forum 
         $_POST['topic_id'];
         $_SESSION['errors'] = $errors;
-        $_SESSION['submitted_data'] = $_POST; // Store submitted data in session
+        $_SESSION['submitted_data'] = $_POST;
         header("Location: ../show_topic.php?topic_id=$topic_id");
         exit();
     }

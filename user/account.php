@@ -13,7 +13,7 @@ $profileInfo = new ProfileInfoView();
 
 ?>
 <nav aria-label="breadcrumb">
-    <ol class="breadcrumb">
+    <ol class=" breadcrumb">
         <li class="breadcrumb-item"><a href="../index.php">Home</a></li>
         <li class="breadcrumb-item active" aria-current="page">Profile</li>
     </ol>
@@ -39,10 +39,11 @@ $profileInfo = new ProfileInfoView();
                             <input type="file" name="profilePicture" accept="image/*">
                             <button type="submit" class="btn btn-primary">Upload New PFP</button>
                         </form>
-                        <form action="../backend/profile_delete_pfp.inc.php" method="post" id="deleteProfilePictureForm">
+                        <form action="../backend/delete_img.php" method="post" id="deleteProfilePictureForm">
                             <input type="hidden" name="deleteProfile" id="deleteProfile" value="delete_pfp">
+                            <input type="hidden" name="userId" value="<?php echo $_SESSION['user_id']; ?>">
                             <!-- Delete profile picture button -->
-                            <button type="submit" class="btn btn-danger" id="deleteProfilePicture">Delete</button>
+                            <button type="submit" class="btn btn-danger" id="deleteProfilePicture" onclick="return confirm('Are you sure you want to delete this image?')">Delete</button>
                         </form>
                     </div>
                 </div>
@@ -93,7 +94,6 @@ $profileInfo = new ProfileInfoView();
                             endif;
                         endforeach;
                         ?>
-
                     </div>
                 </div>
                 <!-- End Center Section -->

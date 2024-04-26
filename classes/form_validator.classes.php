@@ -59,7 +59,7 @@ class FormValidator
                 }
             }
 
-            // *** for post comment *** 
+            // *** for post/reply comment *** 
 
             if (isset($this->data['reply_title'])) {
                 try {
@@ -77,7 +77,7 @@ class FormValidator
                 }
             }
 
-            // *** for create topic ***
+            // *** for create topic & user update topic ***
             if (isset($this->data['topic_title'])) {
                 try {
                     $this->validateTopicTitle();
@@ -134,8 +134,7 @@ class FormValidator
         $this->requiredFields = $fields;
     }
 
-
-    // Updated validation methods in FormValidator class
+    // *** for register new user *** 
 
     private function validateRequiredFields()
     {
@@ -200,7 +199,6 @@ class FormValidator
         if (empty($this->data['topic_title'])) {
             throw new Exception("Title is required");
         }
-        // You can add more validation rules for the title if needed
     }
 
     private function validateTopicContent()
@@ -209,7 +207,6 @@ class FormValidator
         if (empty($this->data['topic_content'])) {
             throw new Exception("Content is required");
         }
-        // You can add more validation rules for the content if needed
     }
 
     private function validateCategory()
@@ -218,7 +215,6 @@ class FormValidator
         if (empty($this->data['category_name'])) {
             throw new Exception("Category is required");
         }
-        // You can add more validation rules for the category if needed
     }
 
 
@@ -255,7 +251,6 @@ class FormValidator
         if (empty($this->data['post_title'])) {
             throw new Exception("post_title: Post title is required");
         }
-        // You can add more validation rules for the post title if needed
     }
 
     private function validatePostContent()
@@ -264,6 +259,5 @@ class FormValidator
         if (empty($this->data['post_content'])) {
             throw new Exception("post_content: Post content is required");
         }
-        // You can add more validation rules for the post content if needed
     }
 }

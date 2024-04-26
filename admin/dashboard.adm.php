@@ -1,6 +1,4 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 
@@ -33,7 +31,6 @@ $total_users = $stmt_statistics->fetch(PDO::FETCH_ASSOC)['total_users'];
 $stmt_statistics = $db->query("SELECT COUNT(*) AS total_categories FROM categories");
 $total_categories = $stmt_statistics->fetch(PDO::FETCH_ASSOC)['total_categories'];
 
-// Include header
 include('header.adm.php');
 ?>
 
@@ -43,8 +40,6 @@ include('header.adm.php');
     <div class="d-flex justify-content-between flex-wrap flex-md-nowrap align-items-center pt-3 pb-2 mb-3 border-bottom">
         <h1 class="h2">Admin Dashboard</h1>
     </div>
-
-    <!-- Summary of Recent Activity -->
     <!-- Recent Activity -->
     <div class="row mb-4">
         <div class="col-md-3">
@@ -80,7 +75,6 @@ include('header.adm.php');
             </ul>
         </div>
     </div>
-
     <!-- Statistics -->
     <h2>Statistics</h2>
     <div class="row mb-4">
@@ -116,7 +110,6 @@ include('header.adm.php');
                 </div>
             </div>
         </div>
-
     </div>
     <div class="row mb-4">
         <div class="col-md-12">
@@ -132,14 +125,11 @@ include('header.adm.php');
         <div class="col-md-12">
             <h2>Important Notifications</h2>
             <!-- Highlight any critical information or updates -->
-            <!-- Example: -->
             <div class="alert alert-warning" role="alert">
                 There are pending tasks that require your attention.
             </div>
         </div>
     </div>
 </main>
-
-<!-- Include footer -->
 </body>
 <?php include('footer.adm.php'); ?>

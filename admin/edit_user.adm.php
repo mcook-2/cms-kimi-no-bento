@@ -1,5 +1,4 @@
 <?php
-// Include necessary files and initialize database connection
 include('../inc/database.inc.php');
 include('../classes/database.classes.php');
 include('../classes/profileinfo.classes.php');
@@ -38,7 +37,7 @@ if (isset($_GET['user_id'])) {
                     <label for="role">Role:</label>
                     <select name="role" id="role" class="form-control">
                         <?php
-                        // Fetch and populate options dynamically based on roles from the database
+                        // Fetch and populate options based on roles from the database
                         $stmtRoles = $db->prepare("SELECT role_name FROM roles");
                         $stmtRoles->execute();
                         $roles = $stmtRoles->fetchAll(PDO::FETCH_COLUMN);
@@ -55,6 +54,7 @@ if (isset($_GET['user_id'])) {
                 <button type="submit" class="btn btn-primary">Update User</button>
             </form>
         </main>
+        </body>
 <?php
     } else {
         echo "User not found.";
@@ -63,6 +63,5 @@ if (isset($_GET['user_id'])) {
     echo "User ID not provided.";
 }
 
-// Include footer
 include('footer.adm.php');
 ?>

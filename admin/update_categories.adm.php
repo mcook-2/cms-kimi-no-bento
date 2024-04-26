@@ -1,18 +1,18 @@
 <?php
-// Include necessary files and initialize database connection
+require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 include('header.adm.php');
 include('sidebar.adm.php');
-var_dump($_POST);
+
 
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
     // Check if category_id is provided
     if (isset($_POST['category_id'])) {
         $category_id = $_POST['category_id'];
 
-        // Check if the form is for updating or deleting
+        // Update category
         if (!empty($_POST['name'])) {
-            // Update category
+            // Update category name
             $name = $_POST['name'];
             $stmt = $db->prepare("UPDATE categories SET name = :name WHERE category_id = :category_id");
             $stmt->bindParam(':name', $name, PDO::PARAM_STR);
@@ -23,27 +23,22 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
                 exit();
             } else {
                 echo "Error updating category.";
-            }
-        } elseif (isset($_POST['delete'])) {
-            // Delete category
-            $stmt = $db->prepare("DELETE FROM categories WHERE category_id = :category_id");
-            $stmt->bindParam(':category_id', $category_id, PDO::PARAM_INT);
-            if ($stmt->execute()) {
-                // Redirect back to view_categories.adm.php with success message
-                header("Location: view_categories.adm.php?success=true");
+                header("Location: edit_categories.adm.php?category_id=$category_id&error=update_fail");
                 exit();
-            } else {
-                echo "Error deleting category.";
             }
         } else {
-            echo "Category name not provided.";
+            header("Location: edit_categories.adm.php?category_id=$category_id&error=invalid_name");
+            exit();
         }
     } else {
-        echo "Category ID not provided.";
+        header("Location: dashboard.adm.php?error=invalid_id");
+        exit();
     }
 } else {
-    echo "Invalid request.";
+    header("Location: dashboard.adm.php?error=invalid_request");
+    exit();
 }
-
+header("Location: dashboard.adm.php?error=invalid_post");
+exit();
 // Include footer
 include('footer.adm.php');

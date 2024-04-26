@@ -1,5 +1,5 @@
 <footer>
-    <div class="container">
+    <div>
         <p class="text-center">2024 RRC. ~ M Cook ~</p>
     </div>
 </footer>

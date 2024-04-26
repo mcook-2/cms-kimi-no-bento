@@ -1,15 +1,17 @@
 <?php
-// Check authentication here
-// If the user is not authenticated, redirect them to the login page
 require_once('../inc/authenticate.inc.php');
 include('../inc/database.inc.php');
 include('../classes/form_validator.classes.php');
 include('../classes/form_sanitizer.classes.php');
 
-// Check if the form is submitted
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     // Check if all required fields are present
-    if (!isset($_POST['topic_id']) || empty($_POST['topic_id']) || !isset($_POST['title']) || empty($_POST['title']) || !isset($_POST['content']) || empty($_POST['content']) || !isset($_POST['category_name']) || empty($_POST['category_name'])) {
+    if (
+        !isset($_POST['topic_id']) || empty($_POST['topic_id']) ||
+        !isset($_POST['title']) || empty($_POST['title']) ||
+        !isset($_POST['content']) || empty($_POST['content']) ||
+        !isset($_POST['category_name']) || empty($_POST['category_name'])
+    ) {
         // Redirect to a page indicating that required fields are missing
         header("Location: view_topics.adm.php?error=missing_fields");
         exit();
@@ -52,6 +54,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     }
 } else {
     // If the form is not submitted via POST method, redirect to an error page
-    header("Location: error_page.php?error=invalid_request");
+    header("Location: dashboard.adm.php?error=invalid_request");
     exit();
 }

@@ -10,6 +10,5 @@
                 <a href="../index.php" class="nav-link" data-parent="#menu3">Home</a>
             </div>
         </div>
-
     </div>
 </div>
