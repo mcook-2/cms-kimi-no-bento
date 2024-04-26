@@ -1,7 +1,7 @@
 <?php
-define('DB_DSN', 'mysql:host=localhost;dbname=knb_database;charset=utf8');
-define('DB_USER', 'cms_user');
-define('DB_PASS', 'youllnevergeussthispassworditslong');
+define('DB_DSN', 'mysql:host=db-mysql-knb-database-74278-do-user-16431368-0.c.db.ondigitalocean.com;dbname=defaultdb;charset=utf8');
+define('DB_USER', 'doadmin');
+define('DB_PASS', 'AVNS_p2uK4i-g1iTffL1b6YB');
 
 //  PDO is PHP Data Objects
 //  mysqli <-- BAD. 

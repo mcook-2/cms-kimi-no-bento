@@ -7,9 +7,9 @@ class Database
     protected function connection()
     {
         // Pre-set database connection parameters
-        $dsn = 'mysql:host=localhost;dbname=knb_database;charset=utf8';
-        $user = 'cms_user';
-        $pass = 'youllnevergeussthispassworditslong';
+        $dsn = 'mysql:host=db-mysql-knb-database-74278-do-user-16431368-0.c.db.ondigitalocean.com;dbname=defaultdb;charset=utf8';
+        $user = 'doadmin';
+        $pass = 'AVNS_p2uK4i-g1iTffL1b6YB';
 
         try {
             $db = new PDO($dsn, $user, $pass);
