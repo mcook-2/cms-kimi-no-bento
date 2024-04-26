@@ -1,8 +1,10 @@
 <?php
-define('BASE_URL', 'https://' . $_SERVER['HTTP_HOST']);
-define('CSS_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/CSS/');
-define('IMG_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/img/');
-define('TINYMCE_URL', 'https://' . $_SERVER['HTTP_HOST'] . '/lib/tinymce/js/tinymce/');
+define('BASE_URL', 'https://seashell-app-fnmo7.ondigitalocean.app/');
+
+define('CSS_URL', BASE_URL . 'CSS/');
+define('IMG_URL', BASE_URL . 'img/');
+define('TINYMCE_URL', BASE_URL . 'lib/tinymce/js/tinymce/');
+
 
 function logout()
 {
